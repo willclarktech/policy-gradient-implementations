@@ -1,4 +1,5 @@
-import gym
+import gym  # type: ignore
+
 from agent import Agent
 
 num_episodes = 50_000
