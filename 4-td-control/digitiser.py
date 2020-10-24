@@ -20,7 +20,7 @@ class CartPoleDigitiser(Digitiser):
     def __init__(
         self, bounds: Observation = [2.4, 4.0, 0.209, 4.0], n_boxes: float = 10
     ) -> None:
-        super().__init__
+        super(CartPoleDigitiser, self).__init__
         self.cart_position_space = np.linspace(-bounds[0], bounds[0], n_boxes)
         self.cart_velocity_space = np.linspace(-bounds[1], bounds[1], n_boxes)
         self.pole_angle_space = np.linspace(-bounds[2], bounds[2], n_boxes)
