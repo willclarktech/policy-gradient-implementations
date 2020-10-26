@@ -4,6 +4,7 @@ import numpy as np  # type: ignore
 
 from agent import Agent
 from digitiser import CartPoleDigitiser
+from utils import plot_returns
 
 num_episodes = 50_000
 log_period = 1000
@@ -17,7 +18,7 @@ average_returns = []
 for i in range(1, num_episodes + 1):
     observation = env.reset()
     done = False
-    ret = 0
+    ret = 0.0
 
     while not done:
         action = agent.policy(observation)
@@ -36,12 +37,4 @@ for i in range(1, num_episodes + 1):
             f"Episode {i}; Average return: {average_return}; Epsilon: {agent.epsilon}"
         )
 
-plt.figure()
-plt.plot(returns, marker="x", label="returns")
-plt.plot(average_returns, marker="o", label="average")
-plt.title("Average return")
-plt.xlabel("Episode")
-plt.ylabel("Return")
-plt.legend()
-plt.grid()
-plt.show()
+plot_returns(returns, average_returns)

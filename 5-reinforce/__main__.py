@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 
 from agent import Agent
+from utils import plot_returns
 
 n_episodes = 3000
 log_period = 100
@@ -16,7 +17,7 @@ for i in range(1, n_episodes + 1):
     agent.reset()
     observation = env.reset()
     done = False
-    ret = 0
+    ret = 0.0
 
     while not done:
         action, log_probability = agent.choose_action(observation)
@@ -36,12 +37,5 @@ for i in range(1, n_episodes + 1):
     if i % log_period == 0:
         print(f"Episode {i}; Average return {average_return}")
 
-plt.figure()
-plt.plot(returns, marker="x", label="returns")
-plt.plot(average_returns, marker="o", label="average")
-plt.title("Average return")
-plt.xlabel("Episode")
-plt.ylabel("Return")
-plt.legend()
-plt.grid()
-plt.show()
+
+plot_returns(returns, average_returns)
