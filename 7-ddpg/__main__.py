@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 
 from agent import Agent
-from utils import plot_returns
+from utils import attempt_with_screen, plot_returns
 
 n_episodes = 1000
 log_period = 1
@@ -28,10 +28,7 @@ for i in range(1, n_episodes + 1):
         agent.learn()
 
         if i == n_episodes:
-            try:
-                env.render()
-            except:
-                print("Screen unavailable")
+            attempt_with_screen(env.render)
 
     returns.append(ret)
     average_return = np.mean(returns[-100:])
@@ -40,7 +37,4 @@ for i in range(1, n_episodes + 1):
     if i % log_period == 0:
         print(f"Episode {i}; Average return {average_return}")
 
-try:
-    plot_returns(returns, average_returns)
-except:
-    print("Screen unavailable")
+attempt_with_screen(lambda: plot_returns(returns, average_returns))

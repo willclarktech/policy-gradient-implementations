@@ -3,6 +3,13 @@ import numpy as np  # type: ignore
 from typing import List, Optional
 
 
+def attempt_with_screen(f) -> None:
+    try:
+        f()
+    except:
+        print("Screen unavailable")
+
+
 def plot_returns(
     returns: List[float],
     average_returns: Optional[List[float]] = None,
