@@ -12,6 +12,18 @@ from noise import OrnsteinUhlenbeckNoise
 from replay_buffer import Action, Observation, ReplayBuffer
 
 
+def update_target_network(
+    target_network: nn.Module, online_network: nn.Module, tau: float
+) -> None:
+    new_state_dict = {
+        key: (
+            (1 - tau) * param.clone() + tau * online_network.state_dict()[key].clone()
+        )
+        for key, param in target_network.state_dict().items()
+    }
+    target_network.load_state_dict(new_state_dict)
+
+
 class Agent:
     def __init__(
         self,
@@ -20,7 +32,7 @@ class Agent:
         batch_size: int = 64,
         replay_buffer_capacity: int = 1_000_000,
         gamma: float = 0.99,
-        tau: float = 0.001,
+        tau: float = 1e-3,
     ) -> None:
         self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
         self.gamma = T.scalar_tensor(gamma).to(self.device)
@@ -37,31 +49,11 @@ class Agent:
         self.actor = Actor(in_features, action_dims).to(self.device)
         self.critic_target = Critic(in_features, action_dims).to(self.device)
         self.actor_target = Actor(in_features, action_dims).to(self.device)
-        self.update_network_parameters(tau=1)
+        self.update_target_networks(tau=1)
 
-    def get_new_target_state_dict(
-        self, target_network: nn.Module, online_network: nn.Module, tau
-    ) -> Dict[str, T.Tensor]:
-        return {
-            key: (
-                (1 - tau) * param.clone()
-                + tau * online_network.state_dict()[key].clone()
-            )
-            for key, param in target_network.state_dict().items()
-        }
-
-    def update_network_parameters(self, tau: float) -> None:
-        critic_target_state_dict = self.get_new_target_state_dict(
-            self.critic_target, self.critic, tau
-        )
-        self.critic_target.load_state_dict(critic_target_state_dict)
-        self.critic_target.eval()
-
-        actor_target_state_dict = self.get_new_target_state_dict(
-            self.actor_target, self.actor, tau
-        )
-        self.actor_target.load_state_dict(actor_target_state_dict)
-        self.actor_target.eval()
+    def update_target_networks(self, tau: float) -> None:
+        update_target_network(self.critic_target, self.critic, tau)
+        update_target_network(self.actor_target, self.actor, tau)
 
     def reset(self) -> None:
         self.noise.reset()
@@ -70,9 +62,9 @@ class Agent:
         return T.tensor(arr, dtype=dtype).to(self.device)
 
     def choose_action(self, observation: Observation) -> Action:
-        self.actor.eval()
-        mu = self.actor(self.process([observation]))
-        return mu.flatten().detach().cpu().numpy() + self.noise()
+        with T.no_grad():
+            mu = self.actor(self.process([observation]))
+            return mu.flatten().detach().cpu().numpy() + self.noise()
 
     def remember(
         self,
@@ -90,9 +82,6 @@ class Agent:
         if self.replay_buffer.size < self.batch_size:
             return
 
-        self.actor.train()
-        self.critic.train()
-
         observation, action, reward, observation_, done = [
             self.process(t) for t in self.replay_buffer.sample(self.batch_size)
         ]
@@ -102,20 +91,21 @@ class Agent:
             target_value_ = self.critic_target(observation_, target_action)
             y = reward + target_value_ * self.gamma * (1 - done)
 
-        self.critic.optimizer.zero_grad()
         q = self.critic(observation, action)
         critic_loss = F.mse_loss(q, y)
+
+        self.critic.optimizer.zero_grad()
         critic_loss.backward()
         self.critic.optimizer.step()
 
-        self.critic.eval()
-        self.actor.optimizer.zero_grad()
         action_current = self.actor(observation)
         actor_loss = -self.critic(observation, action_current).mean()
+
+        self.actor.optimizer.zero_grad()
         actor_loss.backward()
         self.actor.optimizer.step()
 
-        self.update_network_parameters(self.tau)
+        self.update_target_networks(self.tau)
 
     def save(self, save_directory: str) -> None:
         self.actor.save(f"{save_directory}/actor.zip")

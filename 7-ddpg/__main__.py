@@ -6,7 +6,7 @@ from agent import Agent
 from utils import plot_returns
 
 n_episodes = 1000
-log_period = 10
+log_period = 1
 env = gym.make("LunarLanderContinuous-v2")
 agent = Agent(env.observation_space.shape[0], env.action_space.shape[0])
 
@@ -28,7 +28,10 @@ for i in range(1, n_episodes + 1):
         agent.learn()
 
         if i == n_episodes:
-            env.render()
+            try:
+                env.render()
+            except:
+                print("Screen unavailable")
 
     returns.append(ret)
     average_return = np.mean(returns[-100:])
@@ -37,4 +40,7 @@ for i in range(1, n_episodes + 1):
     if i % log_period == 0:
         print(f"Episode {i}; Average return {average_return}")
 
-plot_returns(returns, average_returns)
+try:
+    plot_returns(returns, average_returns)
+except:
+    print("Screen unavailable")
