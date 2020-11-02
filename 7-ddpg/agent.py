@@ -2,9 +2,6 @@ import numpy as np  # type: ignore
 import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.nn.init as init
-import torch.optim as optim
-from typing import Dict, List
 
 from actor import Actor
 from critic import Critic
@@ -15,13 +12,10 @@ from replay_buffer import Action, Observation, ReplayBuffer
 def update_target_network(
     target_network: nn.Module, online_network: nn.Module, tau: float
 ) -> None:
-    new_state_dict = {
-        key: (
-            (1 - tau) * param.clone() + tau * online_network.state_dict()[key].clone()
-        )
-        for key, param in target_network.state_dict().items()
-    }
-    target_network.load_state_dict(new_state_dict)
+    for target_param, online_param in zip(
+        target_network.parameters(), online_network.parameters()
+    ):
+        target_param.data.copy_(tau * online_param.data + (1 - tau) * target_param.data)
 
 
 class Agent:

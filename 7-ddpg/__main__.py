@@ -35,6 +35,6 @@ for i in range(1, n_episodes + 1):
     average_returns.append(average_return)
 
     if i % log_period == 0:
-        print(f"Episode {i}; Average return {average_return}")
+        print(f"Episode {i}; Return: {ret}; Average return {average_return}")
 
 attempt_with_screen(lambda: plot_returns(returns, average_returns))
