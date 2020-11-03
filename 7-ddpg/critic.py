@@ -18,16 +18,18 @@ class Critic(nn.Module):
     ) -> None:
         super(Critic, self).__init__()
 
-        self.fc1 = nn.Linear(in_features, hidden_features_1)
-        self.fc2 = nn.Linear(hidden_features_1, hidden_features_2)
+        self.fc1 = nn.Linear(in_features, hidden_features_1, False)
+        self.fc2 = nn.Linear(hidden_features_1, hidden_features_2, False)
         self.fc3 = nn.Linear(hidden_features_2, 1)
 
         self.observation_value = nn.Sequential(
             self.fc1,
-            nn.LayerNorm(hidden_features_1),
+            nn.BatchNorm1d(hidden_features_1),
+            # nn.LayerNorm(hidden_features_1),
             nn.ReLU(),
             self.fc2,
-            nn.LayerNorm(hidden_features_2),
+            nn.BatchNorm1d(hidden_features_2),
+            # nn.LayerNorm(hidden_features_2),
         )
         self.action_value = nn.Linear(action_dims, hidden_features_2)
         self.q = nn.Sequential(nn.ReLU(), self.fc3)
@@ -41,7 +43,7 @@ class Critic(nn.Module):
         for layer in [self.fc1, self.fc2, self.action_value]:
             bound = 1.0 / np.sqrt(layer.in_features)
             init.uniform_(layer.weight, -bound, bound)
-            init.uniform_(layer.bias, -bound, bound)
+            # init.uniform_(layer.bias, -bound, bound)
 
         out_bound = 3e-3
         init.uniform_(self.fc3.weight, -out_bound, out_bound)

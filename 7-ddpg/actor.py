@@ -16,16 +16,17 @@ class Actor(nn.Module):
     ) -> None:
         super(Actor, self).__init__()
 
-        self.fc1 = nn.Linear(in_features, hidden_features_1)
-        self.fc2 = nn.Linear(hidden_features_1, hidden_features_2)
+        # Bias is meaningless if followed by BatchNorm
+        self.fc1 = nn.Linear(in_features, hidden_features_1, False)
+        self.fc2 = nn.Linear(hidden_features_1, hidden_features_2, False)
         self.fc3 = nn.Linear(hidden_features_2, action_dims)
 
         self.network = nn.Sequential(
             self.fc1,
-            nn.LayerNorm(hidden_features_1),
+            nn.BatchNorm1d(hidden_features_1),
             nn.ReLU(),
             self.fc2,
-            nn.LayerNorm(hidden_features_2),
+            nn.BatchNorm1d(hidden_features_2),
             nn.ReLU(),
             self.fc3,
             nn.Tanh(),
@@ -38,7 +39,6 @@ class Actor(nn.Module):
         for layer in [self.fc1, self.fc2]:
             bound = 1.0 / np.sqrt(layer.in_features)
             init.uniform_(layer.weight, -bound, bound)
-            init.uniform_(layer.bias, -bound, bound)
 
         out_bound = 3e-3
         init.uniform_(self.fc3.weight, -out_bound, out_bound)

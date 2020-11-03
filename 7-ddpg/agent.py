@@ -16,6 +16,7 @@ def update_target_network(
         target_network.parameters(), online_network.parameters()
     ):
         target_param.data.copy_(tau * online_param.data + (1 - tau) * target_param.data)
+    target_network.eval()
 
 
 class Agent:
@@ -56,6 +57,7 @@ class Agent:
         return T.tensor(arr, dtype=dtype).to(self.device)
 
     def choose_action(self, observation: Observation) -> Action:
+        self.actor.eval()
         with T.no_grad():
             mu = self.actor(self.process([observation]))
             return mu.flatten().detach().cpu().numpy() + self.noise()
@@ -80,6 +82,7 @@ class Agent:
             self.process(t) for t in self.replay_buffer.sample(self.batch_size)
         ]
 
+        self.critic.train()
         with T.no_grad():
             target_action = self.actor_target(observation_)
             target_value_ = self.critic_target(observation_, target_action)
@@ -92,6 +95,8 @@ class Agent:
         critic_loss.backward()
         self.critic.optimizer.step()
 
+        self.critic.eval()
+        self.actor.train()
         action_current = self.actor(observation)
         actor_loss = -self.critic(observation, action_current).mean()
 
