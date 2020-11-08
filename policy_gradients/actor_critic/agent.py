@@ -6,6 +6,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 from typing import List, Tuple
 
+from core import Agent, Hyperparameters
+
 Observation = List[float]
 
 
@@ -17,17 +19,14 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
     return [calculate_return(rewards[i:], gamma) for i, _ in enumerate(rewards)]
 
 
-class Agent:
-    def __init__(
-        self,
-        in_features: int,
-        num_actions: int,
-        hidden_features: List[int] = [2048, 1536],
-        alpha: float = 5e-6,
-        gamma: float = 0.99,
-    ) -> None:
-        self.device = T.device("cuda:0" if T.cuda.is_available() else "cpu")
-        self.gamma = gamma
+class ActorCritic(Agent):
+    def __init__(self, hyperparameters: Hyperparameters,) -> None:
+        super(ActorCritic, self).__init__()
+
+        self.gamma = hyperparameters.gamma
+        in_features = hyperparameters.env.observation_space.shape[0]
+        num_actions = hyperparameters.env.action_space.n
+        hidden_features = hyperparameters.hidden_features
 
         self.network = nn.Sequential(
             nn.Linear(in_features, hidden_features[0]),
@@ -44,20 +43,15 @@ class Agent:
             nn.Linear(hidden_features[-1], num_actions), nn.Softmax(dim=-1),
         )
         self.optimizer = optim.Adam(
-            [*self.network.parameters(), *self.V.parameters()], lr=alpha
+            [*self.network.parameters(), *self.V.parameters()], lr=hyperparameters.alpha
         )
 
-    def process_observation(self, observation: Observation) -> T.Tensor:
-        return T.tensor([observation], dtype=T.float32).to(self.device)
-
     def evaluate(self, observation: Observation) -> T.Tensor:
-        processed_observation = self.process_observation(observation)
-        output = self.network(processed_observation)
+        output = self.network(self.process(observation))
         return self.V(output)
 
     def choose_action(self, observation: Observation) -> Tuple[int, T.Tensor]:
-        processed_observation = self.process_observation(observation)
-        output = self.network(processed_observation)
+        output = self.network(self.process(observation))
         probabilities = self.pi(output)
         distribution = distributions.Categorical(probs=probabilities)
         action = distribution.sample()

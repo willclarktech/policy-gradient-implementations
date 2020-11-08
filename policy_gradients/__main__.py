@@ -1,18 +1,28 @@
 #!/usr/bin/env python3
 import argparse
+import gym  # type: ignore
+
+import actor_critic
+import reinforce
 
 
 def main(experiment: str) -> None:
     if experiment == "actor_critic":
-        import actor_critic.__main__
-    elif experiment == "ddpg":
-        import ddpg.__main__
-    elif experiment == "reinforce":
-        import reinforce.__main__
-    elif experiment == "sac":
-        import sac.__main__
-    elif experiment == "td3":
-        import td3.__main__
+        hyperparameters = actor_critic.default_hyperparameters
+        agent = actor_critic.ActorCritic(hyperparameters)
+        actor_critic.train(agent, hyperparameters)
+    # elif experiment == "ddpg":
+    #     pass
+    # elif experiment == "reinforce":
+    #     hyperparameters = reinforce.default_hyperparameters
+    #     agent = reinforce.Reinforce(hyperparameters)
+    #     reinforce.train(agent, hyperparameters)
+    # elif experiment == "sac":
+    #     pass
+    # elif experiment == "td3":
+    #     pass
+    else:
+        raise ValueError(f"Experiment {experiment} not recognised")
 
 
 if __name__ == "__main__":
