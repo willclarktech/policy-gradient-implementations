@@ -21,7 +21,9 @@ class TD3(Agent):
         self.max_action = env.action_space.high
         in_features = env.observation_space.shape[0]
         action_dims = env.action_space.shape[0]
+        hidden_features = hyperparameters.hidden_features
 
+        alpha = hyperparameters.alpha
         self.gamma = T.scalar_tensor(hyperparameters.gamma).to(self.device)
         self.tau = hyperparameters.tau
         self.noise = hyperparameters.noise
@@ -32,12 +34,24 @@ class TD3(Agent):
             hyperparameters.replay_buffer_capacity, (in_features,), action_dims
         )
 
-        self.critic_1 = Critic(in_features, action_dims).to(self.device)
-        self.critic_2 = Critic(in_features, action_dims).to(self.device)
-        self.actor = Actor(in_features, action_dims).to(self.device)
-        self.critic_1_target = Critic(in_features, action_dims).to(self.device)
-        self.critic_2_target = Critic(in_features, action_dims).to(self.device)
-        self.actor_target = Actor(in_features, action_dims).to(self.device)
+        self.critic_1 = Critic(in_features, action_dims, hidden_features, alpha).to(
+            self.device
+        )
+        self.critic_2 = Critic(in_features, action_dims, hidden_features, alpha).to(
+            self.device
+        )
+        self.actor = Actor(in_features, action_dims, hidden_features, alpha).to(
+            self.device
+        )
+        self.critic_1_target = Critic(
+            in_features, action_dims, hidden_features, alpha
+        ).to(self.device)
+        self.critic_2_target = Critic(
+            in_features, action_dims, hidden_features, alpha
+        ).to(self.device)
+        self.actor_target = Actor(in_features, action_dims, hidden_features, alpha).to(
+            self.device
+        )
         self.update_target_networks(tau=1)
 
     def update_target_networks(self, tau: float) -> None:

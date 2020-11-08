@@ -2,6 +2,7 @@ import numpy as np  # type: ignore
 import torch as T
 import torch.nn as nn
 import torch.optim as optim
+from typing import List
 
 
 class Critic(nn.Module):
@@ -9,17 +10,16 @@ class Critic(nn.Module):
         self,
         in_features: int,
         action_dims: int,
-        hidden_features_1: int = 256,
-        hidden_features_2: int = 256,
-        alpha: float = 1e-3,
+        hidden_features: List[int],
+        alpha: float,
     ) -> None:
         super(Critic, self).__init__()
         self.network = nn.Sequential(
-            nn.Linear(in_features + action_dims, hidden_features_1),
+            nn.Linear(in_features + action_dims, hidden_features[0]),
             nn.ReLU(),
-            nn.Linear(hidden_features_1, hidden_features_2),
+            nn.Linear(hidden_features[0], hidden_features[1]),
             nn.ReLU(),
-            nn.Linear(hidden_features_2, 1),
+            nn.Linear(hidden_features[1], 1),
         )
         self.optimizer = optim.Adam(self.parameters(), lr=alpha)
 
