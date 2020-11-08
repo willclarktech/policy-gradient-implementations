@@ -3,6 +3,7 @@ import torch as T
 import torch.nn as nn
 import torch.nn.init as init
 import torch.optim as optim
+from typing import List
 
 
 class Actor(nn.Module):
@@ -10,23 +11,22 @@ class Actor(nn.Module):
         self,
         in_features: int,
         action_dims: int,
-        hidden_features_1: int = 400,
-        hidden_features_2: int = 300,
-        alpha: float = 1e-4,
+        hidden_features: List[int],
+        alpha: float,
     ) -> None:
         super(Actor, self).__init__()
 
         # Bias is meaningless if followed by BatchNorm
-        self.fc1 = nn.Linear(in_features, hidden_features_1, False)
-        self.fc2 = nn.Linear(hidden_features_1, hidden_features_2, False)
-        self.fc3 = nn.Linear(hidden_features_2, action_dims)
+        self.fc1 = nn.Linear(in_features, hidden_features[0], False)
+        self.fc2 = nn.Linear(hidden_features[0], hidden_features[1], False)
+        self.fc3 = nn.Linear(hidden_features[1], action_dims)
 
         self.network = nn.Sequential(
             self.fc1,
-            nn.BatchNorm1d(hidden_features_1),
+            nn.BatchNorm1d(hidden_features[0]),
             nn.ReLU(),
             self.fc2,
-            nn.BatchNorm1d(hidden_features_2),
+            nn.BatchNorm1d(hidden_features[1]),
             nn.ReLU(),
             self.fc3,
             nn.Tanh(),

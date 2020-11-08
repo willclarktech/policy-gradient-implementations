@@ -11,32 +11,31 @@ class Critic(nn.Module):
         self,
         in_features: int,
         action_dims: int,
-        hidden_features_1: int = 400,
-        hidden_features_2: int = 300,
-        alpha: float = 1e-3,
-        l2_weight_decay: float = 0.01,
+        hidden_features: List[int],
+        beta: float,
+        l2_weight_decay: float,
     ) -> None:
         super(Critic, self).__init__()
 
-        self.fc1 = nn.Linear(in_features, hidden_features_1, False)
-        self.fc2 = nn.Linear(hidden_features_1, hidden_features_2, False)
-        self.fc3 = nn.Linear(hidden_features_2, 1)
+        self.fc1 = nn.Linear(in_features, hidden_features[0], False)
+        self.fc2 = nn.Linear(hidden_features[0], hidden_features[1], False)
+        self.fc3 = nn.Linear(hidden_features[1], 1)
 
         self.observation_value = nn.Sequential(
             self.fc1,
-            nn.BatchNorm1d(hidden_features_1),
-            # nn.LayerNorm(hidden_features_1),
+            nn.BatchNorm1d(hidden_features[0]),
+            # nn.LayerNorm(hidden_features[0]),
             nn.ReLU(),
             self.fc2,
-            nn.BatchNorm1d(hidden_features_2),
-            # nn.LayerNorm(hidden_features_2),
+            nn.BatchNorm1d(hidden_features[1]),
+            # nn.LayerNorm(hidden_features[1]),
         )
-        self.action_value = nn.Linear(action_dims, hidden_features_2)
+        self.action_value = nn.Linear(action_dims, hidden_features[1])
         self.q = nn.Sequential(nn.ReLU(), self.fc3)
 
         self.initialize_weights()
         self.optimizer = optim.Adam(
-            self.parameters(), lr=alpha, weight_decay=l2_weight_decay
+            self.parameters(), lr=beta, weight_decay=l2_weight_decay
         )
 
     def initialize_weights(self) -> None:

@@ -15,6 +15,7 @@ class Hyperparameters:
         log_period: int = 1,
         hidden_features: List[int] = [],
         alpha: float = 1.0,
+        beta: float = 1.0,
         gamma: float = 1.0,
         tau: float = 1.0,
         d: int = 1,
@@ -24,6 +25,7 @@ class Hyperparameters:
         epsilon: float = 0.0,
         noise: float = 0.0,
         noise_clip: float = 0.0,
+        l2_weight_decay: float = 0.0,
     ) -> None:
         self.env = gym.make(env_name)
 
@@ -32,6 +34,7 @@ class Hyperparameters:
 
         self.hidden_features = hidden_features
         self.alpha = alpha
+        self.beta = beta
         self.gamma = gamma
         self.tau = tau
         self.d = d
@@ -43,6 +46,8 @@ class Hyperparameters:
         self.epsilon = epsilon
         self.noise = noise
         self.noise_clip = noise_clip
+
+        self.l2_weight_decay = l2_weight_decay
 
 
 class Agent:

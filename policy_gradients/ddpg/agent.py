@@ -30,6 +30,7 @@ class DDPG(Agent):
 
         in_features = hyperparameters.env.observation_space.shape[0]
         action_dims = hyperparameters.env.action_space.shape[0]
+        hidden_features = hyperparameters.hidden_features
 
         self.replay_buffer = ReplayBuffer(
             hyperparameters.replay_buffer_capacity, (in_features,), action_dims
@@ -37,10 +38,21 @@ class DDPG(Agent):
         mu = np.zeros(action_dims)
         self.noise = OrnsteinUhlenbeckNoise(mu)
 
-        self.critic = Critic(in_features, action_dims).to(self.device)
-        self.actor = Actor(in_features, action_dims).to(self.device)
-        self.critic_target = Critic(in_features, action_dims).to(self.device)
-        self.actor_target = Actor(in_features, action_dims).to(self.device)
+        alpha = hyperparameters.alpha
+        beta = hyperparameters.beta
+        l2_weight_decay = hyperparameters.l2_weight_decay
+        self.critic = Critic(
+            in_features, action_dims, hidden_features, beta, l2_weight_decay
+        ).to(self.device)
+        self.actor = Actor(in_features, action_dims, hidden_features, alpha).to(
+            self.device
+        )
+        self.critic_target = Critic(
+            in_features, action_dims, hidden_features, beta, l2_weight_decay
+        ).to(self.device)
+        self.actor_target = Actor(in_features, action_dims, hidden_features, alpha).to(
+            self.device
+        )
         self.update_target_networks(tau=1)
 
     def update_target_networks(self, tau: float) -> None:
