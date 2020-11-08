@@ -1,5 +1,6 @@
 import gym  # type: ignore
 import numpy as np  # type: ignore
+import pybullet_envs  # type: ignore
 import torch as T
 from typing import Any, List
 
@@ -19,6 +20,8 @@ class Hyperparameters:
         d: int = 1,
         batch_size: int = 1,
         replay_buffer_capacity: int = 0,
+        reward_scale: float = 1.0,
+        epsilon: float = 0.0,
         noise: float = 0.0,
         noise_clip: float = 0.0,
     ) -> None:
@@ -35,7 +38,9 @@ class Hyperparameters:
 
         self.batch_size = batch_size
         self.replay_buffer_capacity = replay_buffer_capacity
+        self.reward_scale = reward_scale
 
+        self.epsilon = epsilon
         self.noise = noise
         self.noise_clip = noise_clip
 

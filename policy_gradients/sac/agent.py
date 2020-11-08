@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.distributions as distributions
 
+from core import Agent, Hyperparameters
 from replay_buffer import Action, Observation, ReplayBuffer
 from utils import update_target_network
 
@@ -13,41 +14,31 @@ from sac.critic import Critic
 from sac.value import Value
 
 
-class Agent:
-    def __init__(
-        self,
-        env: gym.Env,
-        batch_size: int = 256,
-        replay_buffer_capacity: int = 1_000_000,
-        gamma: float = 0.99,
-        scale: float = 2.0,
-        tau: float = 5e-3,
-        epsilon: float = 1e-6,
-    ) -> None:
-        self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
-        self.gamma = 0.99
-        self.scale = scale
-        self.tau = tau
-        self.epsilon = epsilon
+class SAC(Agent):
+    def __init__(self, hyperparameters: Hyperparameters) -> None:
+        super(SAC, self).__init__()
+        self.gamma = hyperparameters.gamma
+        self.reward_scale = hyperparameters.reward_scale
+        self.tau = hyperparameters.tau
+        self.epsilon = hyperparameters.epsilon
 
-        in_features = env.observation_space.shape[0]
-        action_dims = env.action_space.shape[0]
+        in_features = hyperparameters.env.observation_space.shape[0]
+        action_dims = hyperparameters.env.action_space.shape[0]
 
-        self.batch_size = batch_size
+        self.batch_size = hyperparameters.batch_size
         self.replay_buffer = ReplayBuffer(
-            replay_buffer_capacity, (in_features,), action_dims
+            hyperparameters.replay_buffer_capacity, (in_features,), action_dims
         )
 
-        self.actor = Actor(in_features, action_dims, epsilon=epsilon).to(self.device)
+        self.actor = Actor(in_features, action_dims, epsilon=self.epsilon).to(
+            self.device
+        )
         self.critic_1 = Critic(in_features, action_dims)
         self.critic_2 = Critic(in_features, action_dims)
         self.value = Value(in_features)
         self.value_target = Value(in_features)
 
         self.update_value_target(tau=1)
-
-    def process(self, arr: np.ndarray, dtype=T.float32) -> T.Tensor:
-        return T.tensor(arr, dtype=dtype).to(self.device)
 
     def choose_action(self, observation: Observation) -> np.ndarray:
         inp = self.process([observation])
@@ -76,10 +67,10 @@ class Agent:
             action, log_probability = self.actor.sample(
                 observation, reparameterize=False
             )
-            Q1_current = self.critic_1(observation, action)
-            Q2_current = self.critic_2(observation, action)
-            Q_current = T.minimum(Q1_current, Q2_current)
-            V_target = Q_current - log_probability
+            Q1 = self.critic_1(observation, action)
+            Q2 = self.critic_2(observation, action)
+            Q = T.minimum(Q1, Q2)
+            V_target = Q - log_probability
 
         self.value.optimizer.zero_grad()
         V = self.value(observation)
@@ -93,7 +84,7 @@ class Agent:
 
         with T.no_grad():
             V_ = self.value_target(observation_) * (1 - done)
-            Q_target = self.scale * reward + self.gamma * V_
+            Q_target = self.reward_scale * reward + self.gamma * V_
 
         for critic in [self.critic_1, self.critic_2]:
             critic.train()
