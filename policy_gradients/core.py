@@ -4,8 +4,6 @@ import pybullet_envs  # type: ignore
 import torch as T
 from typing import Any, List
 
-from utils import plot_returns
-
 
 class Hyperparameters:
     def __init__(
