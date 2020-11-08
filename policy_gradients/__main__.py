@@ -2,6 +2,7 @@
 import argparse
 
 import actor_critic
+import ddpg
 import reinforce
 
 
@@ -10,8 +11,10 @@ def main(experiment: str) -> None:
         hyperparameters = actor_critic.default_hyperparameters
         agent = actor_critic.ActorCritic(hyperparameters)
         actor_critic.train(agent, hyperparameters)
-    # elif experiment == "ddpg":
-    #     pass
+    elif experiment == "ddpg":
+        hyperparameters = ddpg.default_hyperparameters
+        agent = ddpg.DDPG(hyperparameters)
+        ddpg.train(agent, hyperparameters)
     elif experiment == "reinforce":
         hyperparameters = reinforce.default_hyperparameters
         agent = reinforce.Reinforce(hyperparameters)

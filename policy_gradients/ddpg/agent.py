@@ -3,6 +3,7 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 
+from core import Agent, Hyperparameters
 from replay_buffer import Action, Observation, ReplayBuffer
 
 from ddpg.actor import Actor
@@ -20,23 +21,18 @@ def update_target_network(
     target_network.eval()
 
 
-class Agent:
-    def __init__(
-        self,
-        in_features: int,
-        action_dims: int,
-        batch_size: int = 64,
-        replay_buffer_capacity: int = 1_000_000,
-        gamma: float = 0.99,
-        tau: float = 1e-3,
-    ) -> None:
-        self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
-        self.gamma = T.scalar_tensor(gamma).to(self.device)
-        self.tau = tau
-        self.batch_size = batch_size
+class DDPG(Agent):
+    def __init__(self, hyperparameters: Hyperparameters) -> None:
+        super(DDPG, self).__init__()
+        self.gamma = T.scalar_tensor(hyperparameters.gamma).to(self.device)
+        self.tau = hyperparameters.tau
+        self.batch_size = hyperparameters.batch_size
+
+        in_features = hyperparameters.env.observation_space.shape[0]
+        action_dims = hyperparameters.env.action_space.shape[0]
 
         self.replay_buffer = ReplayBuffer(
-            replay_buffer_capacity, (in_features,), action_dims
+            hyperparameters.replay_buffer_capacity, (in_features,), action_dims
         )
         mu = np.zeros(action_dims)
         self.noise = OrnsteinUhlenbeckNoise(mu)
@@ -53,9 +49,6 @@ class Agent:
 
     def reset(self) -> None:
         self.noise.reset()
-
-    def process(self, arr: np.ndarray, dtype=T.float32) -> T.Tensor:
-        return T.tensor(arr, dtype=dtype).to(self.device)
 
     def choose_action(self, observation: Observation) -> Action:
         self.actor.eval()

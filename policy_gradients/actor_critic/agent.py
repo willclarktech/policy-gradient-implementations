@@ -47,11 +47,11 @@ class ActorCritic(Agent):
         )
 
     def evaluate(self, observation: Observation) -> T.Tensor:
-        output = self.network(self.process(observation))
+        output = self.network(self.process([observation]))
         return self.V(output)
 
     def choose_action(self, observation: Observation) -> Tuple[int, T.Tensor]:
-        output = self.network(self.process(observation))
+        output = self.network(self.process([observation]))
         probabilities = self.pi(output)
         distribution = distributions.Categorical(probs=probabilities)
         action = distribution.sample()

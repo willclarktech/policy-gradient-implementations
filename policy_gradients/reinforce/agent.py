@@ -46,7 +46,7 @@ class Reinforce(Agent):
         self.log_probabilities = T.tensor([])
 
     def choose_action(self, observation: Observation) -> Tuple[int, T.Tensor]:
-        output = self.policy(self.process(observation))
+        output = self.policy(self.process([observation]))
         probabilities = F.softmax(output, dim=1)
         distribution = distributions.Categorical(probs=probabilities)
         action = distribution.sample()
