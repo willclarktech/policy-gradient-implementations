@@ -6,6 +6,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 from typing import List, Tuple
 
+from core import Agent, Hyperparameters
+
 Observation = List[float]
 
 
@@ -17,40 +19,34 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
     return [calculate_return(rewards[i:], gamma) for i, _ in enumerate(rewards)]
 
 
-class Agent:
-    def __init__(
-        self,
-        in_features: int,
-        num_actions: int,
-        hidden_features: int = 128,
-        alpha: float = 0.0005,
-        gamma: float = 0.99,
-    ) -> None:
-        self.device = T.device("cuda:0" if T.cuda.is_available() else "cpu")
+class Reinforce(Agent):
+    def __init__(self, hyperparameters: Hyperparameters,) -> None:
+        super(Reinforce, self).__init__()
 
-        self.gamma = gamma
+        self.gamma = hyperparameters.gamma
+        in_features = hyperparameters.env.observation_space.shape[0]
+        num_actions = hyperparameters.env.action_space.n
+        hidden_features = hyperparameters.hidden_features
+
         self.rewards: List[float]
         self.log_probabilities: T.Tensor
 
+        # TODO: Make this properly generic like ActorCritic
         self.policy = nn.Sequential(
-            nn.Linear(in_features, hidden_features),
+            nn.Linear(in_features, hidden_features[0]),
             nn.ReLU(),
-            nn.Linear(hidden_features, hidden_features),
+            nn.Linear(hidden_features[0], hidden_features[1]),
             nn.ReLU(),
-            nn.Linear(hidden_features, num_actions),
+            nn.Linear(hidden_features[1], num_actions),
         ).to(self.device)
-        self.optimizer = optim.Adam(self.policy.parameters(), lr=alpha)
+        self.optimizer = optim.Adam(self.policy.parameters(), lr=hyperparameters.alpha)
 
     def reset(self) -> None:
         self.rewards = []
         self.log_probabilities = T.tensor([])
 
-    def process_observation(self, observation: Observation) -> T.Tensor:
-        return T.tensor([observation], dtype=T.float32).to(self.device)
-
     def choose_action(self, observation: Observation) -> Tuple[int, T.Tensor]:
-        processed_observation = self.process_observation(observation)
-        output = self.policy(processed_observation)
+        output = self.policy(self.process(observation))
         probabilities = F.softmax(output, dim=1)
         distribution = distributions.Categorical(probs=probabilities)
         action = distribution.sample()

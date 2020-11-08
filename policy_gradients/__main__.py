@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import gym  # type: ignore
 
 import actor_critic
 import reinforce
@@ -13,10 +12,10 @@ def main(experiment: str) -> None:
         actor_critic.train(agent, hyperparameters)
     # elif experiment == "ddpg":
     #     pass
-    # elif experiment == "reinforce":
-    #     hyperparameters = reinforce.default_hyperparameters
-    #     agent = reinforce.Reinforce(hyperparameters)
-    #     reinforce.train(agent, hyperparameters)
+    elif experiment == "reinforce":
+        hyperparameters = reinforce.default_hyperparameters
+        agent = reinforce.Reinforce(hyperparameters)
+        reinforce.train(agent, hyperparameters)
     # elif experiment == "sac":
     #     pass
     # elif experiment == "td3":
