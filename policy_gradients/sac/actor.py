@@ -2,7 +2,7 @@ import torch as T
 import torch.distributions as distributions
 import torch.nn as nn
 import torch.optim as optim
-from typing import Tuple
+from typing import List, Tuple
 
 
 class Actor(nn.Module):
@@ -10,21 +10,20 @@ class Actor(nn.Module):
         self,
         in_features: int,
         action_dims: int,
-        hidden_features_1: int = 256,
-        hidden_features_2: int = 256,
-        alpha: float = 3e-4,
-        epsilon: float = 1e-6,
+        hidden_features: List[int],
+        alpha: float,
+        epsilon: float,
     ) -> None:
         super(Actor, self).__init__()
         self.epsilon = epsilon
         self.shared = nn.Sequential(
-            nn.Linear(in_features, hidden_features_1),
+            nn.Linear(in_features, hidden_features[0]),
             nn.ReLU(),
-            nn.Linear(hidden_features_1, hidden_features_2),
+            nn.Linear(hidden_features[0], hidden_features[1]),
             nn.ReLU(),
         )
-        self.mu = nn.Linear(hidden_features_2, action_dims)
-        self.sigma = nn.Linear(hidden_features_2, action_dims)
+        self.mu = nn.Linear(hidden_features[1], action_dims)
+        self.sigma = nn.Linear(hidden_features[1], action_dims)
         self.optimizer = optim.Adam(self.parameters(), lr=alpha)
 
     def forward(self, observation: T.Tensor) -> Tuple[T.Tensor, T.Tensor]:

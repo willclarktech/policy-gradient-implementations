@@ -21,22 +21,24 @@ class SAC(Agent):
         self.reward_scale = hyperparameters.reward_scale
         self.tau = hyperparameters.tau
         self.epsilon = hyperparameters.epsilon
+        alpha = hyperparameters.alpha
 
         in_features = hyperparameters.env.observation_space.shape[0]
         action_dims = hyperparameters.env.action_space.shape[0]
+        hidden_features = hyperparameters.hidden_features
 
         self.batch_size = hyperparameters.batch_size
         self.replay_buffer = ReplayBuffer(
             hyperparameters.replay_buffer_capacity, (in_features,), action_dims
         )
 
-        self.actor = Actor(in_features, action_dims, epsilon=self.epsilon).to(
-            self.device
-        )
-        self.critic_1 = Critic(in_features, action_dims)
-        self.critic_2 = Critic(in_features, action_dims)
-        self.value = Value(in_features)
-        self.value_target = Value(in_features)
+        self.actor = Actor(
+            in_features, action_dims, hidden_features, alpha=alpha, epsilon=self.epsilon
+        ).to(self.device)
+        self.critic_1 = Critic(in_features, action_dims, hidden_features, alpha=alpha)
+        self.critic_2 = Critic(in_features, action_dims, hidden_features, alpha=alpha)
+        self.value = Value(in_features, hidden_features, alpha)
+        self.value_target = Value(in_features, hidden_features, alpha)
 
         self.update_value_target(tau=1)
 
