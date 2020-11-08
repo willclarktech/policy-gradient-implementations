@@ -7,6 +7,8 @@ import reinforce
 import sac
 import td3
 
+experiments = ["actor_critic", "ddpg", "reinforce", "sac", "td3"]
+
 
 def main(experiment: str) -> None:
     if experiment == "actor_critic":
@@ -35,6 +37,6 @@ def main(experiment: str) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("experiment")
+    parser.add_argument("experiment", help=f"Choose from: {', '.join(experiments)}")
     args = parser.parse_args()
     main(args.experiment)
