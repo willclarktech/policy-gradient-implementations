@@ -1,18 +1,19 @@
 import numpy as np  # type: ignore
 from typing import List, Tuple
 
-Observation = List[float]
-Action = List[float]
 Sample = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]
 
 
 class ReplayBuffer:
     def __init__(
-        self, capacity: int, observation_shape: Tuple[int, ...], action_dims: int
+        self,
+        capacity: int,
+        observation_shape: Tuple[int, ...],
+        action_shape: Tuple[int, ...],
     ) -> None:
         self.capacity = capacity
         self.observations = np.zeros((capacity, *observation_shape))
-        self.actions = np.zeros((capacity, action_dims))
+        self.actions = np.zeros((capacity, *action_shape))
         self.rewards = np.zeros((capacity, 1), dtype=np.float32)
         self.observations_ = np.zeros((capacity, *observation_shape))
         self.dones = np.zeros((capacity, 1), dtype=np.bool)
@@ -25,10 +26,10 @@ class ReplayBuffer:
 
     def store_transition(
         self,
-        observation: Observation,
-        action: Action,
+        observation: np.ndarray,
+        action: np.ndarray,
         reward: float,
-        observation_: Observation,
+        observation_: np.ndarray,
         done: bool,
     ) -> None:
         i = self.index % self.capacity

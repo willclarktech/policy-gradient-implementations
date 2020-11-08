@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from core import Agent, Hyperparameters
-from replay_buffer import Action, Observation, ReplayBuffer
+from replay_buffer import ReplayBuffer
 
 from ddpg.actor import Actor
 from ddpg.critic import Critic
@@ -28,31 +28,31 @@ class DDPG(Agent):
         self.tau = hyperparameters.tau
         self.batch_size = hyperparameters.batch_size
 
-        in_features = hyperparameters.env.observation_space.shape[0]
-        action_dims = hyperparameters.env.action_space.shape[0]
+        in_dims = hyperparameters.env.observation_space.shape
+        action_dims = hyperparameters.env.action_space.shape
         hidden_features = hyperparameters.hidden_features
 
         self.replay_buffer = ReplayBuffer(
-            hyperparameters.replay_buffer_capacity, (in_features,), action_dims
+            hyperparameters.replay_buffer_capacity, in_dims, action_dims
         )
-        mu = np.zeros(action_dims)
+        mu = np.zeros(action_dims[0])
         self.noise = OrnsteinUhlenbeckNoise(mu)
 
         alpha = hyperparameters.alpha
         beta = hyperparameters.beta
         l2_weight_decay = hyperparameters.l2_weight_decay
         self.critic = Critic(
-            in_features, action_dims, hidden_features, beta, l2_weight_decay
+            in_dims[0], action_dims[0], hidden_features, beta, l2_weight_decay
         ).to(self.device)
-        self.actor = Actor(in_features, action_dims, hidden_features, alpha).to(
+        self.actor = Actor(in_dims[0], action_dims[0], hidden_features, alpha).to(
             self.device
         )
         self.critic_target = Critic(
-            in_features, action_dims, hidden_features, beta, l2_weight_decay
+            in_dims[0], action_dims[0], hidden_features, beta, l2_weight_decay
         ).to(self.device)
-        self.actor_target = Actor(in_features, action_dims, hidden_features, alpha).to(
-            self.device
-        )
+        self.actor_target = Actor(
+            in_dims[0], action_dims[0], hidden_features, alpha
+        ).to(self.device)
         self.update_target_networks(tau=1)
 
     def update_target_networks(self, tau: float) -> None:
@@ -62,7 +62,7 @@ class DDPG(Agent):
     def reset(self) -> None:
         self.noise.reset()
 
-    def choose_action(self, observation: Observation) -> Action:
+    def choose_action(self, observation: np.ndarray) -> np.ndarray:
         self.actor.eval()
         with T.no_grad():
             mu = self.actor(self.process([observation]))
@@ -70,10 +70,10 @@ class DDPG(Agent):
 
     def remember(
         self,
-        observation: Observation,
-        action: Action,
+        observation: np.ndarray,
+        action: np.ndarray,
         reward: float,
-        observation_: Observation,
+        observation_: np.ndarray,
         done: bool,
     ) -> None:
         self.replay_buffer.store_transition(

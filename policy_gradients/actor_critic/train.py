@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np  # type: ignore
 
 from core import Hyperparameters
 from utils import plot_returns

@@ -8,8 +8,6 @@ from typing import List, Tuple
 
 from core import Agent, Hyperparameters
 
-Observation = List[float]
-
 
 def calculate_return(rewards: List[float], gamma) -> float:
     return np.sum([reward * (gamma ** i) for i, reward in enumerate(rewards)])
@@ -45,7 +43,7 @@ class Reinforce(Agent):
         self.rewards = []
         self.log_probabilities = T.tensor([])
 
-    def choose_action(self, observation: Observation) -> Tuple[int, T.Tensor]:
+    def choose_action(self, observation: np.ndarray) -> Tuple[int, T.Tensor]:
         output = self.policy(self.process([observation]))
         probabilities = F.softmax(output, dim=1)
         distribution = distributions.Categorical(probs=probabilities)

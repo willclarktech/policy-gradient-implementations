@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from core import Agent, Hyperparameters
-from replay_buffer import Action, Observation, ReplayBuffer
+from replay_buffer import ReplayBuffer
 from utils import update_target_network
 
 from td3.actor import Actor
@@ -19,8 +19,8 @@ class TD3(Agent):
         env = hyperparameters.env
         self.min_action = env.action_space.low
         self.max_action = env.action_space.high
-        in_features = env.observation_space.shape[0]
-        action_dims = env.action_space.shape[0]
+        in_dims = env.observation_space.shape
+        action_dims = env.action_space.shape
         hidden_features = hyperparameters.hidden_features
 
         alpha = hyperparameters.alpha
@@ -31,27 +31,27 @@ class TD3(Agent):
         self.d = hyperparameters.d
         self.batch_size = hyperparameters.batch_size
         self.replay_buffer = ReplayBuffer(
-            hyperparameters.replay_buffer_capacity, (in_features,), action_dims
+            hyperparameters.replay_buffer_capacity, in_dims, action_dims
         )
 
-        self.critic_1 = Critic(in_features, action_dims, hidden_features, alpha).to(
+        self.critic_1 = Critic(in_dims[0], action_dims[0], hidden_features, alpha).to(
             self.device
         )
-        self.critic_2 = Critic(in_features, action_dims, hidden_features, alpha).to(
+        self.critic_2 = Critic(in_dims[0], action_dims[0], hidden_features, alpha).to(
             self.device
         )
-        self.actor = Actor(in_features, action_dims, hidden_features, alpha).to(
+        self.actor = Actor(in_dims[0], action_dims[0], hidden_features, alpha).to(
             self.device
         )
         self.critic_1_target = Critic(
-            in_features, action_dims, hidden_features, alpha
+            in_dims[0], action_dims[0], hidden_features, alpha
         ).to(self.device)
         self.critic_2_target = Critic(
-            in_features, action_dims, hidden_features, alpha
+            in_dims[0], action_dims[0], hidden_features, alpha
         ).to(self.device)
-        self.actor_target = Actor(in_features, action_dims, hidden_features, alpha).to(
-            self.device
-        )
+        self.actor_target = Actor(
+            in_dims[0], action_dims[0], hidden_features, alpha
+        ).to(self.device)
         self.update_target_networks(tau=1)
 
     def update_target_networks(self, tau: float) -> None:
@@ -59,7 +59,7 @@ class TD3(Agent):
         update_target_network(self.critic_2_target, self.critic_2, tau)
         update_target_network(self.actor_target, self.actor, tau)
 
-    def choose_action(self, observation: Observation) -> Action:
+    def choose_action(self, observation: np.ndarray) -> np.ndarray:
         self.actor.eval()
         with T.no_grad():
             raw_action = (
@@ -70,10 +70,10 @@ class TD3(Agent):
 
     def remember(
         self,
-        observation: Observation,
-        action: Action,
+        observation: np.ndarray,
+        action: np.ndarray,
         reward: float,
-        observation_: Observation,
+        observation_: np.ndarray,
         done: bool,
     ) -> None:
         self.replay_buffer.store_transition(

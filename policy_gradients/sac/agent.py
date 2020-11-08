@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch.distributions as distributions
 
 from core import Agent, Hyperparameters
-from replay_buffer import Action, Observation, ReplayBuffer
+from replay_buffer import ReplayBuffer
 from utils import update_target_network
 
 from sac.actor import Actor
@@ -23,36 +23,40 @@ class SAC(Agent):
         self.epsilon = hyperparameters.epsilon
         alpha = hyperparameters.alpha
 
-        in_features = hyperparameters.env.observation_space.shape[0]
-        action_dims = hyperparameters.env.action_space.shape[0]
+        in_dims = hyperparameters.env.observation_space.shape
+        action_dims = hyperparameters.env.action_space.shape
         hidden_features = hyperparameters.hidden_features
 
         self.batch_size = hyperparameters.batch_size
         self.replay_buffer = ReplayBuffer(
-            hyperparameters.replay_buffer_capacity, (in_features,), action_dims
+            hyperparameters.replay_buffer_capacity, in_dims, action_dims
         )
 
         self.actor = Actor(
-            in_features, action_dims, hidden_features, alpha=alpha, epsilon=self.epsilon
+            in_dims[0],
+            action_dims[0],
+            hidden_features,
+            alpha=alpha,
+            epsilon=self.epsilon,
         ).to(self.device)
-        self.critic_1 = Critic(in_features, action_dims, hidden_features, alpha=alpha)
-        self.critic_2 = Critic(in_features, action_dims, hidden_features, alpha=alpha)
-        self.value = Value(in_features, hidden_features, alpha)
-        self.value_target = Value(in_features, hidden_features, alpha)
+        self.critic_1 = Critic(in_dims[0], action_dims[0], hidden_features, alpha=alpha)
+        self.critic_2 = Critic(in_dims[0], action_dims[0], hidden_features, alpha=alpha)
+        self.value = Value(in_dims[0], hidden_features, alpha)
+        self.value_target = Value(in_dims[0], hidden_features, alpha)
 
         self.update_value_target(tau=1)
 
-    def choose_action(self, observation: Observation) -> np.ndarray:
+    def choose_action(self, observation: np.ndarray) -> np.ndarray:
         inp = self.process([observation])
         action, _ = self.actor.sample(inp, reparameterize=False)
         return action.cpu().detach().numpy()[0]
 
     def remember(
         self,
-        observation: Observation,
-        action: Action,
+        observation: np.ndarray,
+        action: np.ndarray,
         reward: float,
-        observation_: Observation,
+        observation_: np.ndarray,
         done: bool,
     ) -> None:
         self.replay_buffer.store_transition(
