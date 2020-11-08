@@ -4,10 +4,11 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 
-from actor import Actor
-from critic import Critic
 from replay_buffer import Action, Observation, ReplayBuffer
 from utils import update_target_network
+
+from td3.actor import Actor
+from td3.critic import Critic
 
 
 class Agent:

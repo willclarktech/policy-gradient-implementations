@@ -2,11 +2,12 @@ import gym  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 
-from agent import Agent
 from utils import plot_returns
 
+from actor_critic.agent import Agent
+
 n_episodes = 2000
-log_period = 10
+log_period = 1
 env = gym.make("LunarLander-v2")
 agent = Agent(env.observation_space.shape[0], env.action_space.n)
 

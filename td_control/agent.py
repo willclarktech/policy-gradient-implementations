@@ -1,7 +1,7 @@
 import numpy as np  # type: ignore
 from typing import Dict, List, Tuple
 
-from digitiser import (
+from td_control.digitiser import (
     DigitisedObservation,
     Digitiser,
     Observation,

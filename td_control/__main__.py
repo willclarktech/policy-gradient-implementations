@@ -2,9 +2,10 @@ import gym  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 
-from agent import Agent
-from digitiser import CartPoleDigitiser
 from utils import plot_returns
+
+from td_control.agent import Agent
+from td_control.digitiser import CartPoleDigitiser
 
 num_episodes = 50_000
 log_period = 1000

@@ -2,8 +2,9 @@ import gym  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 
-from agent import Agent
 from utils import attempt_with_screen, plot_returns
+
+from td3.agent import Agent
 
 n_episodes = 1000
 # n_episodes = 1500

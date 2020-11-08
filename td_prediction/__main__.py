@@ -1,6 +1,6 @@
 import gym  # type: ignore
 
-from agent import Agent
+from td_prediction.agent import Agent
 
 num_episodes = 5000
 log_period = 1000

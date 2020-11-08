@@ -3,10 +3,11 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 
-from actor import Actor
-from critic import Critic
-from noise import OrnsteinUhlenbeckNoise
 from replay_buffer import Action, Observation, ReplayBuffer
+
+from ddpg.actor import Actor
+from ddpg.critic import Critic
+from ddpg.noise import OrnsteinUhlenbeckNoise
 
 
 def update_target_network(

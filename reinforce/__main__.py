@@ -2,8 +2,9 @@ import gym  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 
-from agent import Agent
 from utils import plot_returns
+
+from reinforce.agent import Agent
 
 n_episodes = 3000
 log_period = 100

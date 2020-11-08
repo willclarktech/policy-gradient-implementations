@@ -5,11 +5,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.distributions as distributions
 
-from actor import Actor
-from critic import Critic
 from replay_buffer import Action, Observation, ReplayBuffer
 from utils import update_target_network
-from value import Value
+
+from sac.actor import Actor
+from sac.critic import Critic
+from sac.value import Value
 
 
 class Agent:

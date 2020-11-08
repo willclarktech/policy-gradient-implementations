@@ -2,8 +2,9 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 import pybullet_envs  # type: ignore
 
-from agent import Agent
 from utils import attempt_with_screen, plot_returns
+
+from sac.agent import Agent
 
 n_episodes = 250
 log_period = 1

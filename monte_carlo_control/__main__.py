@@ -1,7 +1,7 @@
 import gym  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 
-from agent import Agent
+from monte_carlo_control.agent import Agent
 
 num_episodes = 50_000
 log_period = 1000

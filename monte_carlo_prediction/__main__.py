@@ -1,6 +1,6 @@
 import gym  # type: ignore
 
-from agent import Agent
+from monte_carlo_prediction.agent import Agent
 
 num_episodes = 50_000
 log_period = 10_000
