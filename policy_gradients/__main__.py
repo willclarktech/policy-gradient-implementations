@@ -4,6 +4,7 @@ import argparse
 import actor_critic
 import ddpg
 import reinforce
+import td3
 
 
 def main(experiment: str) -> None:
@@ -21,8 +22,10 @@ def main(experiment: str) -> None:
         reinforce.train(agent, hyperparameters)
     # elif experiment == "sac":
     #     pass
-    # elif experiment == "td3":
-    #     pass
+    elif experiment == "td3":
+        hyperparameters = td3.default_hyperparameters
+        agent = td3.TD3(hyperparameters)
+        td3.train(agent, hyperparameters)
     else:
         raise ValueError(f"Experiment {experiment} not recognised")
 

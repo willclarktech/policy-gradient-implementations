@@ -4,6 +4,7 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 
+from core import Agent, Hyperparameters
 from replay_buffer import Action, Observation, ReplayBuffer
 from utils import update_target_network
 
@@ -11,33 +12,24 @@ from td3.actor import Actor
 from td3.critic import Critic
 
 
-class Agent:
-    def __init__(
-        self,
-        env: gym.Env,
-        batch_size: int = 100,
-        replay_buffer_capacity: int = 1_000_000,
-        gamma: float = 0.99,
-        tau: float = 5e-3,
-        noise: float = 0.2,
-        noise_clip: float = 0.5,
-        d: int = 2,
-    ) -> None:
-        self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
+class TD3(Agent):
+    def __init__(self, hyperparameters: Hyperparameters) -> None:
+        super(TD3, self).__init__()
 
+        env = hyperparameters.env
         self.min_action = env.action_space.low
         self.max_action = env.action_space.high
         in_features = env.observation_space.shape[0]
         action_dims = env.action_space.shape[0]
 
-        self.gamma = T.scalar_tensor(gamma).to(self.device)
-        self.tau = tau
-        self.noise = noise
-        self.noise_clip = noise_clip
-        self.d = d
-        self.batch_size = batch_size
+        self.gamma = T.scalar_tensor(hyperparameters.gamma).to(self.device)
+        self.tau = hyperparameters.tau
+        self.noise = hyperparameters.noise
+        self.noise_clip = hyperparameters.noise_clip
+        self.d = hyperparameters.d
+        self.batch_size = hyperparameters.batch_size
         self.replay_buffer = ReplayBuffer(
-            replay_buffer_capacity, (in_features,), action_dims
+            hyperparameters.replay_buffer_capacity, (in_features,), action_dims
         )
 
         self.critic_1 = Critic(in_features, action_dims).to(self.device)
@@ -52,9 +44,6 @@ class Agent:
         update_target_network(self.critic_1_target, self.critic_1, tau)
         update_target_network(self.critic_2_target, self.critic_2, tau)
         update_target_network(self.actor_target, self.actor, tau)
-
-    def process(self, arr: np.ndarray, dtype=T.float32) -> T.Tensor:
-        return T.tensor(arr, dtype=dtype).to(self.device)
 
     def choose_action(self, observation: Observation) -> Action:
         self.actor.eval()

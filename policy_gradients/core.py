@@ -16,8 +16,11 @@ class Hyperparameters:
         alpha: float = 1.0,
         gamma: float = 1.0,
         tau: float = 1.0,
+        d: int = 1,
         batch_size: int = 1,
         replay_buffer_capacity: int = 0,
+        noise: float = 0.0,
+        noise_clip: float = 0.0,
     ) -> None:
         self.env = gym.make(env_name)
 
@@ -28,9 +31,13 @@ class Hyperparameters:
         self.alpha = alpha
         self.gamma = gamma
         self.tau = tau
+        self.d = d
 
         self.batch_size = batch_size
         self.replay_buffer_capacity = replay_buffer_capacity
+
+        self.noise = noise
+        self.noise_clip = noise_clip
 
 
 class Agent:
