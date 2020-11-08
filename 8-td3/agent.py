@@ -7,16 +7,7 @@ import torch.nn.functional as F
 from actor import Actor
 from critic import Critic
 from replay_buffer import Action, Observation, ReplayBuffer
-
-
-def update_target_network(
-    target_network: nn.Module, online_network: nn.Module, tau: float
-) -> None:
-    for target_param, online_param in zip(
-        target_network.parameters(), online_network.parameters()
-    ):
-        target_param.data.copy_(tau * online_param.data + (1 - tau) * target_param.data)
-    target_network.eval()
+from utils import update_target_network
 
 
 class Agent:

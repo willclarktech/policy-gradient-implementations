@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
+import torch.nn as nn
 from typing import List, Optional
 
 
@@ -29,3 +30,13 @@ def plot_returns(
     plt.legend()
     plt.grid()
     plt.show()
+
+
+def update_target_network(
+    target_network: nn.Module, online_network: nn.Module, tau: float
+) -> None:
+    for target_param, online_param in zip(
+        target_network.parameters(), online_network.parameters()
+    ):
+        target_param.data.copy_(tau * online_param.data + (1 - tau) * target_param.data)
+    target_network.eval()

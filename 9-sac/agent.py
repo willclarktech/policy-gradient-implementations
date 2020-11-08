@@ -7,18 +7,9 @@ import torch.distributions as distributions
 
 from actor import Actor
 from critic import Critic
-from value import Value
 from replay_buffer import Action, Observation, ReplayBuffer
-
-
-def update_target_network(
-    target_network: nn.Module, online_network: nn.Module, tau: float
-) -> None:
-    for target_param, online_param in zip(
-        target_network.parameters(), online_network.parameters()
-    ):
-        target_param.data.copy_(tau * online_param.data + (1 - tau) * target_param.data)
-    target_network.eval()
+from utils import update_target_network
+from value import Value
 
 
 class Agent:
@@ -52,7 +43,7 @@ class Agent:
         self.value = Value(in_features)
         self.value_target = Value(in_features)
 
-        self.update_target_network(tau=1)
+        self.update_value_target(tau=1)
 
     def process(self, arr: np.ndarray, dtype=T.float32) -> T.Tensor:
         return T.tensor(arr, dtype=dtype).to(self.device)
@@ -129,7 +120,7 @@ class Agent:
         actor_loss.backward()
         self.actor.optimizer.step()
 
-    def update_target_network(self, tau: float) -> None:
+    def update_value_target(self, tau: float) -> None:
         update_target_network(self.value_target, self.value, tau)
 
     def learn(self) -> None:
@@ -143,4 +134,4 @@ class Agent:
         self.update_value(observation)
         self.update_critics(observation, action, reward, observation_, done)
         self.update_actor(observation)
-        self.update_target_network(tau=self.tau)
+        self.update_value_target(tau=self.tau)
