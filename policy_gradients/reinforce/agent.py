@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from typing import List, Tuple
 
-from core import Agent, Hyperparameters
+from core import BaseAgent, Hyperparameters
 
 
 def calculate_return(rewards: List[float], gamma) -> float:
@@ -17,9 +17,9 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
     return [calculate_return(rewards[i:], gamma) for i, _ in enumerate(rewards)]
 
 
-class Reinforce(Agent):
+class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters,) -> None:
-        super(Reinforce, self).__init__()
+        super(Agent, self).__init__()
 
         self.gamma = hyperparameters.gamma
         in_features = hyperparameters.env.observation_space.shape[0]

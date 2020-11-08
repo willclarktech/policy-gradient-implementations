@@ -7,36 +7,29 @@ import reinforce
 import sac
 import td3
 
-experiments = ["actor_critic", "ddpg", "reinforce", "sac", "td3"]
+algorithms = {
+    "actor_critic": actor_critic,
+    "ddpg": ddpg,
+    "reinforce": reinforce,
+    "sac": sac,
+    "td3": td3,
+}
 
 
 def main(experiment: str) -> None:
-    if experiment == "actor_critic":
-        hyperparameters = actor_critic.default_hyperparameters
-        agent = actor_critic.ActorCritic(hyperparameters)
-        actor_critic.train(agent, hyperparameters)
-    elif experiment == "ddpg":
-        hyperparameters = ddpg.default_hyperparameters
-        agent = ddpg.DDPG(hyperparameters)
-        ddpg.train(agent, hyperparameters)
-    elif experiment == "reinforce":
-        hyperparameters = reinforce.default_hyperparameters
-        agent = reinforce.Reinforce(hyperparameters)
-        reinforce.train(agent, hyperparameters)
-    elif experiment == "sac":
-        hyperparameters = sac.default_hyperparameters
-        agent = sac.SAC(hyperparameters)
-        sac.train(agent, hyperparameters)
-    elif experiment == "td3":
-        hyperparameters = td3.default_hyperparameters
-        agent = td3.TD3(hyperparameters)
-        td3.train(agent, hyperparameters)
-    else:
+    algorithm = algorithms[experiment]
+    if algorithm is None:
         raise ValueError(f"Experiment {experiment} not recognised")
+
+    hyperparameters = algorithm.default_hyperparameters
+    agent = algorithm.Agent(hyperparameters)
+    algorithm.train(agent, hyperparameters)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("experiment", help=f"Choose from: {', '.join(experiments)}")
+    parser.add_argument(
+        "experiment", help=f"Choose from: {', '.join(algorithms.keys())}"
+    )
     args = parser.parse_args()
     main(args.experiment)

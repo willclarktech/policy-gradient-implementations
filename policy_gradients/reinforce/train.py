@@ -4,10 +4,10 @@ import numpy as np  # type: ignore
 from core import Hyperparameters
 from utils import plot_returns
 
-from reinforce.agent import Reinforce
+from reinforce.agent import Agent
 
 
-def train(agent: Reinforce, hyperparameters: Hyperparameters) -> None:
+def train(agent: Agent, hyperparameters: Hyperparameters) -> None:
     env = hyperparameters.env
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period

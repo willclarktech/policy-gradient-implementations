@@ -6,9 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from typing import List, Tuple
 
-from core import Agent, Hyperparameters
-
-Observation = List[float]
+from core import BaseAgent, Hyperparameters
 
 
 def calculate_return(rewards: List[float], gamma) -> float:
@@ -19,9 +17,9 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
     return [calculate_return(rewards[i:], gamma) for i, _ in enumerate(rewards)]
 
 
-class ActorCritic(Agent):
+class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters,) -> None:
-        super(ActorCritic, self).__init__()
+        super(Agent, self).__init__()
 
         self.gamma = hyperparameters.gamma
         in_features = hyperparameters.env.observation_space.shape[0]
@@ -46,11 +44,11 @@ class ActorCritic(Agent):
             [*self.network.parameters(), *self.V.parameters()], lr=hyperparameters.alpha
         )
 
-    def evaluate(self, observation: Observation) -> T.Tensor:
+    def evaluate(self, observation: np.ndarray) -> T.Tensor:
         output = self.network(self.process([observation]))
         return self.V(output)
 
-    def choose_action(self, observation: Observation) -> Tuple[int, T.Tensor]:
+    def choose_action(self, observation: np.ndarray) -> Tuple[int, T.Tensor]:
         output = self.network(self.process([observation]))
         probabilities = self.pi(output)
         distribution = distributions.Categorical(probs=probabilities)
@@ -60,11 +58,11 @@ class ActorCritic(Agent):
 
     def update(
         self,
-        observation: Observation,
+        observation: np.ndarray,
         log_probability: T.Tensor,
         reward: float,
         done: bool,
-        observation_: Observation,
+        observation_: np.ndarray,
     ) -> None:
         self.optimizer.zero_grad()
 

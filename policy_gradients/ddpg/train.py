@@ -4,10 +4,10 @@ import numpy as np  # type: ignore
 from core import Hyperparameters
 from utils import attempt_with_screen, plot_returns
 
-from ddpg.agent import DDPG
+from ddpg.agent import Agent
 
 
-def train(agent: DDPG, hyperparameters: Hyperparameters):
+def train(agent: Agent, hyperparameters: Hyperparameters):
     env = hyperparameters.env
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period

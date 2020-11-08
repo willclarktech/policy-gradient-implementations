@@ -4,7 +4,7 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 
-from core import Agent, Hyperparameters
+from core import BaseAgent, Hyperparameters
 from replay_buffer import ReplayBuffer
 from utils import update_target_network
 
@@ -12,9 +12,9 @@ from td3.actor import Actor
 from td3.critic import Critic
 
 
-class TD3(Agent):
+class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters) -> None:
-        super(TD3, self).__init__()
+        super(Agent, self).__init__()
 
         env = hyperparameters.env
         self.min_action = env.action_space.low

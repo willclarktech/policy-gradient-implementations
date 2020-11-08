@@ -3,10 +3,10 @@ import numpy as np  # type: ignore
 from core import Hyperparameters
 from utils import attempt_with_screen, plot_returns
 
-from sac.agent import SAC
+from sac.agent import Agent
 
 
-def train(agent: SAC, hyperparameters: Hyperparameters) -> None:
+def train(agent: Agent, hyperparameters: Hyperparameters) -> None:
     env = hyperparameters.env
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period

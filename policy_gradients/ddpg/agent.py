@@ -3,7 +3,7 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 
-from core import Agent, Hyperparameters
+from core import BaseAgent, Hyperparameters
 from replay_buffer import ReplayBuffer
 
 from ddpg.actor import Actor
@@ -21,9 +21,9 @@ def update_target_network(
     target_network.eval()
 
 
-class DDPG(Agent):
+class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters) -> None:
-        super(DDPG, self).__init__()
+        super(Agent, self).__init__()
         self.gamma = T.scalar_tensor(hyperparameters.gamma).to(self.device)
         self.tau = hyperparameters.tau
         self.batch_size = hyperparameters.batch_size

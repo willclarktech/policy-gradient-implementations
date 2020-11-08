@@ -48,7 +48,7 @@ class Hyperparameters:
         self.l2_weight_decay = l2_weight_decay
 
 
-class Agent:
+class BaseAgent:
     def __init__(self):
         self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
 

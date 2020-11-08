@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.distributions as distributions
 
-from core import Agent, Hyperparameters
+from core import BaseAgent, Hyperparameters
 from replay_buffer import ReplayBuffer
 from utils import update_target_network
 
@@ -14,9 +14,9 @@ from sac.critic import Critic
 from sac.value import Value
 
 
-class SAC(Agent):
+class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters) -> None:
-        super(SAC, self).__init__()
+        super(Agent, self).__init__()
         self.gamma = hyperparameters.gamma
         self.reward_scale = hyperparameters.reward_scale
         self.tau = hyperparameters.tau
