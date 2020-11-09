@@ -1,18 +1,14 @@
 import numpy as np  # type: ignore
 from typing import Dict, List, Tuple
 
-from td_control.digitiser import (
-    DigitisedObservation,
-    Digitiser,
-    Observation,
-)
+from td_control.digitizer import Digitizer, Observation
 
 
 class Agent:
     def __init__(
         self,
         n_actions: int,
-        digitiser: Digitiser,
+        digitizer: Digitizer,
         alpha: float = 0.01,
         gamma: float = 0.99,
         epsilon_max: float = 1.0,
@@ -28,17 +24,17 @@ class Agent:
         self.Q: Dict[Tuple[Tuple, int], float] = {}
 
         self.action_space = list(range(n_actions))
-        self.digitiser = digitiser
+        self.digitizer = digitizer
 
         self.init_Q()
 
     def init_Q(self) -> None:
-        for observation in self.digitiser.observation_space:
+        for observation in self.digitizer.observation_space:
             for action in self.action_space:
                 self.Q[(tuple(observation), action)] = 0.0
 
     def process_observation(self, observation: Observation) -> Tuple:
-        return tuple(self.digitiser.digitise(observation))
+        return tuple(self.digitizer.digitize(observation))
 
     def policy(self, observation: Observation) -> int:
         if np.random.random() < self.epsilon:

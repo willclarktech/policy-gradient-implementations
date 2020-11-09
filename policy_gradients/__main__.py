@@ -26,7 +26,7 @@ def main(experiment: str, seed: Optional[int]) -> None:
 
     algorithm = algorithms[experiment]
     if algorithm is None:
-        raise ValueError(f"Experiment {experiment} not recognised")
+        raise ValueError(f"Experiment {experiment} not recognized")
 
     hyperparameters = algorithm.default_hyperparameters(seed)  # type: ignore
     agent = algorithm.Agent(hyperparameters)  # type: ignore

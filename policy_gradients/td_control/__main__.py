@@ -5,14 +5,14 @@ import numpy as np  # type: ignore
 from utils import plot_returns
 
 from td_control.agent import Agent
-from td_control.digitiser import CartPoleDigitiser
+from td_control.digitizer import CartPoleDigitizer
 
 num_episodes = 50_000
 log_period = 1000
 
 env = gym.make("CartPole-v1")
-digitiser = CartPoleDigitiser()
-agent = Agent(env.action_space.n, digitiser, epsilon_step=2.0 / num_episodes)
+digitizer = CartPoleDigitizer()
+agent = Agent(env.action_space.n, digitizer, epsilon_step=2.0 / num_episodes)
 returns = []
 average_returns = []
 
