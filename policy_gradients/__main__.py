@@ -28,9 +28,9 @@ def main(experiment: str, seed: Optional[int]) -> None:
     if algorithm is None:
         raise ValueError(f"Experiment {experiment} not recognised")
 
-    hyperparameters = algorithm.default_hyperparameters(seed)
-    agent = algorithm.Agent(hyperparameters)
-    train(agent, hyperparameters, algorithm.run_episode)
+    hyperparameters = algorithm.default_hyperparameters(seed)  # type: ignore
+    agent = algorithm.Agent(hyperparameters)  # type: ignore
+    train(agent, hyperparameters, algorithm.run_episode)  # type: ignore
 
 
 if __name__ == "__main__":
