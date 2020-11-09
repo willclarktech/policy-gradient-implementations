@@ -60,12 +60,6 @@ class BaseAgent:
     def process(self, observation: np.ndarray, dtype=T.float32) -> T.Tensor:
         return T.tensor(observation, dtype=dtype).to(self.device)
 
-    def choose_action(self, *args) -> Any:
-        pass
-
-    def update(self, *args) -> None:
-        pass
-
 
 EpisodeRunner = Callable[[BaseAgent, Hyperparameters], float]
 
