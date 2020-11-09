@@ -31,7 +31,10 @@ class Agent(BaseAgent):
         self.d = hyperparameters.d
         self.batch_size = hyperparameters.batch_size
         self.replay_buffer = ReplayBuffer(
-            hyperparameters.replay_buffer_capacity, in_dims, action_dims
+            hyperparameters.replay_buffer_capacity,
+            in_dims,
+            action_dims,
+            hyperparameters.seed,
         )
 
         self.critic_1 = Critic(in_dims[0], action_dims[0], hidden_features, alpha).to(

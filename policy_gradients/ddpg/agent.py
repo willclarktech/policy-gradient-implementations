@@ -33,7 +33,10 @@ class Agent(BaseAgent):
         hidden_features = hyperparameters.hidden_features
 
         self.replay_buffer = ReplayBuffer(
-            hyperparameters.replay_buffer_capacity, in_dims, action_dims
+            hyperparameters.replay_buffer_capacity,
+            in_dims,
+            action_dims,
+            hyperparameters.seed,
         )
         mu = np.zeros(action_dims[0])
         self.noise = OrnsteinUhlenbeckNoise(mu)

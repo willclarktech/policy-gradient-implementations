@@ -2,12 +2,13 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 import pybullet_envs  # type: ignore
 import torch as T
-from typing import Any, List
+from typing import Any, List, Optional
 
 
 class Hyperparameters:
     def __init__(
         self,
+        seed: Optional[int] = None,
         env_name: str = "",
         n_episodes: int = 0,
         log_period: int = 1,
@@ -25,7 +26,9 @@ class Hyperparameters:
         noise_clip: float = 0.0,
         l2_weight_decay: float = 0.0,
     ) -> None:
+        self.seed = seed
         self.env = gym.make(env_name)
+        self.env.seed(self.seed)
 
         self.n_episodes = n_episodes
         self.log_period = log_period

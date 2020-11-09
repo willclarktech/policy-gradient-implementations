@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
+import os
+import random
+import torch as T
 import torch.nn as nn
 from typing import List, Optional
 
@@ -30,6 +33,17 @@ def plot_returns(
     plt.legend()
     plt.grid()
     plt.show()
+
+
+def set_seed(seed: int) -> None:
+    T.set_deterministic(True)
+    T.backends.cudnn.deterministic = True
+    T.backends.cudnn.benchmark = False
+    T.manual_seed(seed)
+    T.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
 
 
 def update_target_network(

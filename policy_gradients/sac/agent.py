@@ -29,7 +29,10 @@ class Agent(BaseAgent):
 
         self.batch_size = hyperparameters.batch_size
         self.replay_buffer = ReplayBuffer(
-            hyperparameters.replay_buffer_capacity, in_dims, action_dims
+            hyperparameters.replay_buffer_capacity,
+            in_dims,
+            action_dims,
+            hyperparameters.seed,
         )
 
         self.actor = Actor(

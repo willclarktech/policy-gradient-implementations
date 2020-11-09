@@ -1,5 +1,5 @@
 import numpy as np  # type: ignore
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 Sample = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]
 
@@ -10,6 +10,7 @@ class ReplayBuffer:
         capacity: int,
         observation_shape: Tuple[int, ...],
         action_shape: Tuple[int, ...],
+        seed: Optional[int] = None,
     ) -> None:
         self.capacity = capacity
         self.observations = np.zeros((capacity, *observation_shape))
@@ -17,7 +18,7 @@ class ReplayBuffer:
         self.rewards = np.zeros((capacity, 1), dtype=np.float32)
         self.observations_ = np.zeros((capacity, *observation_shape))
         self.dones = np.zeros((capacity, 1), dtype=np.bool)
-        self.rng = np.random.default_rng()
+        self.rng = np.random.default_rng(seed)
         self.index = 0
 
     @property
