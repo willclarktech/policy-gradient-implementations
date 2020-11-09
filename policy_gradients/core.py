@@ -2,7 +2,9 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 import pybullet_envs  # type: ignore
 import torch as T
-from typing import Any, List, Optional
+from typing import Any, Callable, List, Optional
+
+from utils import plot_returns
 
 
 class Hyperparameters:
@@ -63,3 +65,28 @@ class BaseAgent:
 
     def update(self, *args) -> None:
         pass
+
+
+EpisodeRunner = Callable[[BaseAgent, Hyperparameters], float]
+
+
+def train(
+    agent: BaseAgent, hyperparameters: Hyperparameters, run_episode: EpisodeRunner
+) -> None:
+    n_episodes = hyperparameters.n_episodes
+    log_period = hyperparameters.log_period
+
+    returns = []
+    average_returns = []
+
+    for i in range(1, n_episodes + 1):
+        ret = run_episode(agent, hyperparameters)
+
+        returns.append(ret)
+        average_return = np.mean(returns[-100:])
+        average_returns.append(average_return)
+
+        if i % log_period == 0:
+            print(f"Episode {i}; Average return {average_return}")
+
+    plot_returns(returns, average_returns)

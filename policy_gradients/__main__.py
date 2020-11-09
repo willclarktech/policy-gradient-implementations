@@ -2,6 +2,7 @@
 import argparse
 from typing import Optional
 
+from core import train
 from utils import set_seed
 
 import actor_critic
@@ -29,7 +30,7 @@ def main(experiment: str, seed: Optional[int]) -> None:
 
     hyperparameters = algorithm.default_hyperparameters(seed)
     agent = algorithm.Agent(hyperparameters)
-    algorithm.train(agent, hyperparameters)
+    train(agent, hyperparameters, algorithm.run_episode)
 
 
 if __name__ == "__main__":
