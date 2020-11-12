@@ -21,3 +21,12 @@ Currently available experiments:
 -   reinforce
 -   sac
 -   td3
+
+## Troubleshooting
+
+I had trouble installing some packages (e.g. `pybullet`) directly using Pipenv. This worked for me:
+
+1. Start a Pipenv shell: `pipenv shell`
+2. Install `pybullet` using `pip`: `pip install pybullet`
+3. Add `pybullet` to `Pipfile` manually
+4. Generate lockfile: `pipenv lock`
