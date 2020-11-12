@@ -54,10 +54,10 @@ class Hyperparameters:
 
 
 class BaseAgent:
-    def __init__(self):
+    def __init__(self) -> None:
         self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
 
-    def process(self, observation: np.ndarray, dtype=T.float32) -> T.Tensor:
+    def process(self, observation: np.ndarray, dtype: T.dtype = T.float32) -> T.Tensor:
         return T.tensor(observation, dtype=dtype).to(self.device)
 
 

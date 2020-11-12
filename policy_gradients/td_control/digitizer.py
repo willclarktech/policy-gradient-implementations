@@ -6,7 +6,7 @@ DigitizedObservation = List[int]
 
 
 class Digitizer:
-    def __init__(self):
+    def __init__(self) -> None:
         self.observation_space: List[DigitizedObservation] = []
 
     def get_observation_space(self) -> List[DigitizedObservation]:

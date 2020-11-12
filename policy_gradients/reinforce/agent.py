@@ -9,7 +9,7 @@ from typing import List, Tuple
 from core import BaseAgent, Hyperparameters
 
 
-def calculate_return(rewards: List[float], gamma) -> float:
+def calculate_return(rewards: List[float], gamma: float) -> float:
     return np.sum([reward * (gamma ** i) for i, reward in enumerate(rewards)])
 
 

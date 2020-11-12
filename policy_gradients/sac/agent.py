@@ -66,7 +66,7 @@ class Agent(BaseAgent):
             observation, action, reward, observation_, done
         )
 
-    def update_value(self, observation) -> None:
+    def update_value(self, observation: np.ndarray) -> None:
         self.actor.eval()
         self.critic_1.eval()
         self.critic_2.eval()
@@ -87,7 +87,14 @@ class Agent(BaseAgent):
         V_loss.backward(retain_graph=True)
         self.value.optimizer.step()
 
-    def update_critics(self, observation, action, reward, observation_, done) -> None:
+    def update_critics(
+        self,
+        observation: np.ndarray,
+        action: np.ndarray,
+        reward: np.ndarray,
+        observation_: np.ndarray,
+        done: np.ndarray,
+    ) -> None:
         self.critic_1.train()
         self.critic_2.train()
 
@@ -103,7 +110,7 @@ class Agent(BaseAgent):
             critic_loss.backward(retain_graph=True)
             critic.optimizer.step()
 
-    def update_actor(self, observation) -> None:
+    def update_actor(self, observation: np.ndarray) -> None:
         self.actor.train()
         self.critic_1.eval()
         self.critic_2.eval()

@@ -4,10 +4,10 @@ import os
 import random
 import torch as T
 import torch.nn as nn
-from typing import List, Optional
+from typing import Any, Callable, List, Optional
 
 
-def attempt_with_screen(f) -> None:
+def attempt_with_screen(f: Callable[[], Any]) -> None:
     try:
         f()
     except:

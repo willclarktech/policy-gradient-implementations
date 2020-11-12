@@ -34,7 +34,7 @@ class Actor(nn.Module):
         )
 
     def sample(
-        self, observation: T.Tensor, reparameterize=True
+        self, observation: T.Tensor, reparameterize: bool = True
     ) -> Tuple[T.Tensor, T.Tensor]:
         means, stds = self.forward(observation)
         distribution = distributions.normal.Normal(means, stds)
