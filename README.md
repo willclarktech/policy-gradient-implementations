@@ -4,23 +4,29 @@ Implementing algorithms from https://lilianweng.github.io/lil-log/2018/04/08/pol
 
 ## Prerequisites
 
-Python3
+-   Python3.8
+
+## Installation
+
+Using Pipenv:
+
+```sh
+pipenv install
+```
 
 ## Running an experiment
 
 From the root directory:
 
 ```sh
-python3 policy_gradients <experiment>
+./bin/policy_gradients <algorithm>
 ```
 
-Currently available experiments:
+To see the full list of options, including available algorithms:
 
--   actor_critic
--   ddpg
--   reinforce
--   sac
--   td3
+```sh
+./bin/policy_gradients --help
+```
 
 ## Troubleshooting
 
