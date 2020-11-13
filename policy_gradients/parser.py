@@ -7,14 +7,16 @@ def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:
         "policy_gradients",
         description="Run various implementations of policy gradient-based reinforcement learning algorithms.",
     )
-    parser.add_argument("experiment", help=f"choose from: {', '.join(algorithms)}")
+    parser.add_argument("algorithm", help=f"choose from: {', '.join(algorithms)}")
 
     parser.add_argument("--seed", type=int, help="seed to use for reproducible results")
     parser.add_argument(
-        "--env",
+        "--env_name",
         help="choose an environment name from OpenAI’s gym or pybullet; defaults to a sensible choice",
     )
-    parser.add_argument("-n", type=int, help="number of training episodes")
+    parser.add_argument(
+        "-n", "--n_episodes", type=int, help="number of training episodes"
+    )
     parser.add_argument("--log_period", type=int, help="number of episodes per log")
     parser.add_argument(
         "--hidden_features",

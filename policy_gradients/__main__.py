@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Any, Dict
 
-from core import train
+from core import Hyperparameters, train
 from parser import create_parser
 from utils import set_seed
 
@@ -19,15 +19,21 @@ algorithms = {
 }
 
 
-def main(args) -> None:
-    if args.seed is not None:
-        set_seed(args.seed)
+def main(cli_args: Dict[str, Any]) -> None:
+    if cli_args["seed"] is not None:
+        set_seed(cli_args["seed"])
 
-    algorithm = algorithms[args.experiment]
+    algorithm_name = cli_args.pop("algorithm")
+    algorithm = algorithms[algorithm_name]
     if algorithm is None:
-        raise ValueError(f"Experiment {args.experiment} not recognized")
+        raise ValueError(f"Experiment {algorithm_name} not recognized")
 
-    hyperparameters = algorithm.default_hyperparameters(args.seed)  # type: ignore
+    hyperparameter_args = algorithm.default_hyperparameters()  # type: ignore
+    for key in cli_args:
+        if cli_args[key] is not None:
+            hyperparameter_args[key] = cli_args[key]
+
+    hyperparameters = Hyperparameters(**hyperparameter_args)
     agent = algorithm.Agent(hyperparameters)  # type: ignore
     train(agent, hyperparameters, algorithm.run_episode)  # type: ignore
 
@@ -35,4 +41,4 @@ def main(args) -> None:
 if __name__ == "__main__":
     parser = create_parser(algorithms.keys())
     args = parser.parse_args()
-    main(args)
+    main(vars(args))

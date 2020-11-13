@@ -1,11 +1,8 @@
-from typing import Optional
-
-from core import Hyperparameters
+from core import HyperparametersArgs
 
 
-def default_hyperparameters(seed: Optional[int]) -> Hyperparameters:
-    return Hyperparameters(
-        seed=seed,
+def default_hyperparameters() -> HyperparametersArgs:
+    return HyperparametersArgs(
         env_name="LunarLander-v2",
         n_episodes=2000,
         log_period=1,
