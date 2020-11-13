@@ -14,6 +14,12 @@ Using Pipenv:
 pipenv install
 ```
 
+Using pip:
+
+```sh
+pip install -r requirements.txt
+```
+
 ## Running an experiment
 
 From the root directory:
