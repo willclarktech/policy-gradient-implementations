@@ -42,10 +42,14 @@ class Agent(BaseAgent):
             alpha=alpha,
             epsilon=self.epsilon,
         ).to(self.device)
-        self.critic_1 = Critic(in_dims[0], action_dims[0], hidden_features, alpha=alpha)
-        self.critic_2 = Critic(in_dims[0], action_dims[0], hidden_features, alpha=alpha)
-        self.value = Value(in_dims[0], hidden_features, alpha)
-        self.value_target = Value(in_dims[0], hidden_features, alpha)
+        self.critic_1 = Critic(
+            in_dims[0], action_dims[0], hidden_features, alpha=alpha
+        ).to(self.device)
+        self.critic_2 = Critic(
+            in_dims[0], action_dims[0], hidden_features, alpha=alpha
+        ).to(self.device)
+        self.value = Value(in_dims[0], hidden_features, alpha).to(self.device)
+        self.value_target = Value(in_dims[0], hidden_features, alpha).to(self.device)
 
         self.update_value_target(tau=1)
 
@@ -66,7 +70,7 @@ class Agent(BaseAgent):
             observation, action, reward, observation_, done
         )
 
-    def update_value(self, observation: np.ndarray) -> None:
+    def update_value(self, observation: T.Tensor) -> None:
         self.actor.eval()
         self.critic_1.eval()
         self.critic_2.eval()
@@ -89,11 +93,11 @@ class Agent(BaseAgent):
 
     def update_critics(
         self,
-        observation: np.ndarray,
-        action: np.ndarray,
-        reward: np.ndarray,
-        observation_: np.ndarray,
-        done: np.ndarray,
+        observation: T.Tensor,
+        action: T.Tensor,
+        reward: T.Tensor,
+        observation_: T.Tensor,
+        done: T.Tensor,
     ) -> None:
         self.critic_1.train()
         self.critic_2.train()
@@ -105,12 +109,12 @@ class Agent(BaseAgent):
         for critic in [self.critic_1, self.critic_2]:
             critic.train()
             critic.optimizer.zero_grad()
-            Q = critic(observation, action)
+            Q = critic(self.process(observation), self.process(action))
             critic_loss = 0.5 * F.mse_loss(Q.flatten(), Q_target.flatten())
             critic_loss.backward(retain_graph=True)
             critic.optimizer.step()
 
-    def update_actor(self, observation: np.ndarray) -> None:
+    def update_actor(self, observation: T.Tensor) -> None:
         self.actor.train()
         self.critic_1.eval()
         self.critic_2.eval()
