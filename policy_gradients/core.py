@@ -2,29 +2,9 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 import pybullet_envs  # type: ignore
 import torch as T
-from typing import Any, Callable, List, Optional, TypedDict
+from typing import Any, Callable, List, Optional
 
 from utils import plot_returns
-
-
-class HyperparametersArgs(TypedDict, total=False):
-    seed: int
-    env_name: str
-    n_episodes: int
-    log_period: int
-    hidden_features: List[int]
-    alpha: float
-    beta: float
-    gamma: float
-    tau: float
-    d: int
-    batch_size: int
-    replay_buffer_capacity: int
-    reward_scale: float
-    epsilon: float
-    noise: float
-    noise_clip: float
-    l2_weight_decay: float
 
 
 class Hyperparameters:

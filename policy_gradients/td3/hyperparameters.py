@@ -1,8 +1,8 @@
-from core import HyperparametersArgs
+from typing import Any, Dict
 
 
-def default_hyperparameters() -> HyperparametersArgs:
-    return HyperparametersArgs(
+def default_hyperparameters() -> Dict[str, Any]:
+    return dict(
         env_name="LunarLanderContinuous-v2",
         n_episodes=1000,
         log_period=1,

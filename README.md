@@ -4,7 +4,7 @@ Implementing algorithms from https://lilianweng.github.io/lil-log/2018/04/08/pol
 
 ## Prerequisites
 
--   Python3.8
+-   Python3.6
 
 ## Installation
 
