@@ -21,7 +21,7 @@ algorithms = {
 
 
 def main(cli_args: Dict[str, Any]) -> None:
-    if cli_args["seed"] is not None:
+    if hasattr(cli_args, "seed") and cli_args["seed"] is not None:
         set_seed(cli_args["seed"])
 
     algorithm_name = cli_args.pop("algorithm")
