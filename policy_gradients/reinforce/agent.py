@@ -29,7 +29,6 @@ class Agent(BaseAgent):
         self.rewards: List[float]
         self.log_probabilities: T.Tensor
 
-        # TODO: Make this properly generic like ActorCritic
         self.policy = nn.Sequential(
             nn.Linear(in_features, hidden_features[0]),
             nn.ReLU(),
