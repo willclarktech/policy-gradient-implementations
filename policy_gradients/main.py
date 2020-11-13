@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import Any, Dict
 
 from core import Hyperparameters, train
@@ -35,6 +36,11 @@ def main(cli_args: Dict[str, Any]) -> None:
 
     hyperparameters = Hyperparameters(**hyperparameter_args)
     agent = algorithm.Agent(hyperparameters)  # type: ignore
+
+    print(f"Algorithm: {algorithm_name}")
+    print("Hyperparameters:")
+    pprint(hyperparameter_args)
+
     train(agent, hyperparameters, algorithm.run_episode)  # type: ignore
 
 
