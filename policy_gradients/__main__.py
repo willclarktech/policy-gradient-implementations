@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-import argparse
 from typing import Optional
 
 from core import train
+from parser import create_parser
 from utils import set_seed
 
 import actor_critic
@@ -20,24 +19,20 @@ algorithms = {
 }
 
 
-def main(experiment: str, seed: Optional[int]) -> None:
-    if seed is not None:
-        set_seed(seed)
+def main(args) -> None:
+    if args.seed is not None:
+        set_seed(args.seed)
 
-    algorithm = algorithms[experiment]
+    algorithm = algorithms[args.experiment]
     if algorithm is None:
-        raise ValueError(f"Experiment {experiment} not recognized")
+        raise ValueError(f"Experiment {args.experiment} not recognized")
 
-    hyperparameters = algorithm.default_hyperparameters(seed)  # type: ignore
+    hyperparameters = algorithm.default_hyperparameters(args.seed)  # type: ignore
     agent = algorithm.Agent(hyperparameters)  # type: ignore
     train(agent, hyperparameters, algorithm.run_episode)  # type: ignore
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "experiment", help=f"Choose from: {', '.join(algorithms.keys())}"
-    )
-    parser.add_argument("--seed", type=int, default=None)
+    parser = create_parser(algorithms.keys())
     args = parser.parse_args()
-    main(args.experiment, args.seed)
+    main(args)
