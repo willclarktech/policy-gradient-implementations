@@ -40,7 +40,7 @@ class Agent(BaseAgent):
 
     def reset(self) -> None:
         self.rewards = []
-        self.log_probabilities = T.tensor([])
+        self.log_probabilities = T.tensor([]).to(self.device)
 
     def choose_action(self, observation: np.ndarray) -> Tuple[int, T.Tensor]:
         output = self.policy(self.process([observation]))
