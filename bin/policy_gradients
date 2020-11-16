@@ -1,3 +1,7 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail
+command -v shellcheck > /dev/null && shellcheck "$0"
+
 DIR="$(cd "$(dirname "$0")" >/dev/null 2>&1 && pwd)"
-python3 "$(dirname $DIR)/policy_gradients/main.py" "$@"
+DIR="$(dirname "$DIR")"
+PYTHONPATH="$DIR" python3 "$DIR/policy_gradients" "$@"
