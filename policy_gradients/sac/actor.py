@@ -42,7 +42,5 @@ class Actor(nn.Module):
         action = T.tanh(sample)
         log_probability = distribution.log_prob(sample) - (
             (1 - action.pow(2)) + self.epsilon
-        ).log().sum(
-            dim=1, keepdim=True
-        )  # TODO: sum after subtraction?
+        ).log().sum(dim=1, keepdim=True)
         return action, log_probability
