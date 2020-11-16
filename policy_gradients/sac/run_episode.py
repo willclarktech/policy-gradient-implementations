@@ -1,9 +1,9 @@
 import numpy as np  # type: ignore
 
-from core import Hyperparameters
-from utils import attempt_with_screen, plot_returns
+from policy_gradients.core import Hyperparameters
+from policy_gradients.utils import attempt_with_screen, plot_returns
 
-from sac.agent import Agent
+from policy_gradients.sac.agent import Agent
 
 
 def run_episode(agent: Agent, hyperparameters: Hyperparameters) -> float:

@@ -1,15 +1,15 @@
 from pprint import pprint
 from typing import Any, Dict
 
-from core import Hyperparameters, train
-from parser import create_parser
-from utils import set_seed
+from policy_gradients.core import Hyperparameters, train
+from policy_gradients.parser import create_parser
+from policy_gradients.utils import set_seed
 
-import actor_critic
-import ddpg
-import reinforce
-import sac
-import td3
+import policy_gradients.actor_critic as actor_critic
+import policy_gradients.ddpg as ddpg
+import policy_gradients.reinforce as reinforce
+import policy_gradients.sac as sac
+import policy_gradients.td3 as td3
 
 algorithms = {
     "actor_critic": actor_critic,
@@ -20,7 +20,7 @@ algorithms = {
 }
 
 
-def main(cli_args: Dict[str, Any]) -> None:
+def run(cli_args: Dict[str, Any]) -> None:
     if hasattr(cli_args, "seed") and cli_args["seed"] is not None:
         set_seed(cli_args["seed"])
 
@@ -42,9 +42,3 @@ def main(cli_args: Dict[str, Any]) -> None:
     pprint(hyperparameter_args)
 
     train(agent, hyperparameters, algorithm.run_episode)  # type: ignore
-
-
-if __name__ == "__main__":
-    parser = create_parser(algorithms.keys())
-    args = parser.parse_args()
-    main(vars(args))

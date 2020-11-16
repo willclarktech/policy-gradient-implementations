@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 
-from core import Hyperparameters
-from utils import plot_returns
+from policy_gradients.core import Hyperparameters
+from policy_gradients.utils import plot_returns
 
-from reinforce.agent import Agent
+from policy_gradients.reinforce.agent import Agent
 
 
 def run_episode(agent: Agent, hyperparameters: Hyperparameters) -> float:

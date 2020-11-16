@@ -4,12 +4,12 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 
-from core import BaseAgent, Hyperparameters
-from replay_buffer import ReplayBuffer
-from utils import update_target_network
+from policy_gradients.core import BaseAgent, Hyperparameters
+from policy_gradients.replay_buffer import ReplayBuffer
+from policy_gradients.utils import update_target_network
 
-from td3.actor import Actor
-from td3.critic import Critic
+from policy_gradients.td3.actor import Actor
+from policy_gradients.td3.critic import Critic
 
 
 class Agent(BaseAgent):

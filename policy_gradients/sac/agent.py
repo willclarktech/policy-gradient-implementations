@@ -5,13 +5,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.distributions as distributions
 
-from core import BaseAgent, Hyperparameters
-from replay_buffer import ReplayBuffer
-from utils import update_target_network
+from policy_gradients.core import BaseAgent, Hyperparameters
+from policy_gradients.replay_buffer import ReplayBuffer
+from policy_gradients.utils import update_target_network
 
-from sac.actor import Actor
-from sac.critic import Critic
-from sac.value import Value
+from policy_gradients.sac.actor import Actor
+from policy_gradients.sac.critic import Critic
+from policy_gradients.sac.value import Value
 
 
 class Agent(BaseAgent):

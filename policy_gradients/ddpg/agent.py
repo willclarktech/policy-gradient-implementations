@@ -3,12 +3,12 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 
-from core import BaseAgent, Hyperparameters
-from replay_buffer import ReplayBuffer
+from policy_gradients.core import BaseAgent, Hyperparameters
+from policy_gradients.replay_buffer import ReplayBuffer
 
-from ddpg.actor import Actor
-from ddpg.critic import Critic
-from ddpg.noise import OrnsteinUhlenbeckNoise
+from policy_gradients.ddpg.actor import Actor
+from policy_gradients.ddpg.critic import Critic
+from policy_gradients.ddpg.noise import OrnsteinUhlenbeckNoise
 
 
 def update_target_network(

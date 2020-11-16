@@ -4,7 +4,7 @@ import pybullet_envs  # type: ignore
 import torch as T
 from typing import Any, Callable, List, Optional
 
-from utils import plot_returns
+from policy_gradients.utils import plot_returns
 
 
 class Hyperparameters:

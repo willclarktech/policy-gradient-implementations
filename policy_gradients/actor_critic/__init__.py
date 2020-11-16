@@ -1,3 +1,3 @@
-from actor_critic.agent import Agent
-from actor_critic.hyperparameters import default_hyperparameters
-from actor_critic.run_episode import run_episode
+from policy_gradients.actor_critic.agent import Agent
+from policy_gradients.actor_critic.hyperparameters import default_hyperparameters
+from policy_gradients.actor_critic.run_episode import run_episode

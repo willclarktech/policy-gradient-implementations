@@ -1,3 +1,3 @@
-from reinforce.agent import Agent
-from reinforce.hyperparameters import default_hyperparameters
-from reinforce.run_episode import run_episode
+from policy_gradients.reinforce.agent import Agent
+from policy_gradients.reinforce.hyperparameters import default_hyperparameters
+from policy_gradients.reinforce.run_episode import run_episode

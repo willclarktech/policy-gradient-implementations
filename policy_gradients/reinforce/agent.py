@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from typing import List, Tuple
 
-from core import BaseAgent, Hyperparameters
+from policy_gradients.core import BaseAgent, Hyperparameters
 
 
 def calculate_return(rewards: List[float], gamma: float) -> float:
