@@ -19,7 +19,7 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
 
 class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters,) -> None:
-        super(Agent, self).__init__()
+        super(Agent, self).__init__(hyperparameters)
 
         self.gamma = hyperparameters.gamma
         in_features = hyperparameters.env.observation_space.shape[0]
@@ -60,3 +60,9 @@ class Agent(BaseAgent):
         loss = T.sum(-G * self.log_probabilities)
         loss.backward()
         self.optimizer.step()
+
+    def load(self, load_dir: str) -> None:
+        self.policy.load_state_dict(T.load(self.get_savefile_name(load_dir, "policy")))
+
+    def save(self, save_dir: str) -> None:
+        T.save(self.policy.state_dict(), self.get_savefile_name(save_dir, "policy"))

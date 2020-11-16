@@ -14,7 +14,7 @@ from policy_gradients.td3.critic import Critic
 
 class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters) -> None:
-        super(Agent, self).__init__()
+        super(Agent, self).__init__(hyperparameters)
 
         env = hyperparameters.env
         self.min_action = env.action_space.low
@@ -126,16 +126,26 @@ class Agent(BaseAgent):
 
             self.update_target_networks(self.tau)
 
-    def save(self, save_directory: str) -> None:
-        self.actor.save(f"{save_directory}/actor.zip")
-        self.critic_1.save(f"{save_directory}/critic_1.zip")
-        self.critic_2.save(f"{save_directory}/critic_2.zip")
+    def load(self, load_dir: str) -> None:
+        self.actor.load_state_dict(T.load(self.get_savefile_name(load_dir, "actor")))
+        self.critic_1.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "critic_1"))
+        )
+        self.critic_2.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "critic_2"))
+        )
 
-    def load(self, save_directory: str) -> None:
-        self.actor.load(f"{save_directory}/actor.zip")
-        self.critic_1.load(f"{save_directory}/critic_1.zip")
-        self.critic_2.load(f"{save_directory}/critic_2.zip")
+        self.actor_target.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "actor"))
+        )
+        self.critic_1_target.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "critic_1"))
+        )
+        self.critic_2_target.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "critic_2"))
+        )
 
-        self.actor_target.load(f"{save_directory}/actor.zip")
-        self.critic_1_target.load(f"{save_directory}/critic_1.zip")
-        self.critic_2_target.load(f"{save_directory}/critic_2.zip")
+    def save(self, save_dir: str) -> None:
+        T.save(self.actor.state_dict(), self.get_savefile_name(save_dir, "actor"))
+        T.save(self.critic_1.state_dict(), self.get_savefile_name(save_dir, "critic_1"))
+        T.save(self.critic_2.state_dict(), self.get_savefile_name(save_dir, "critic_2"))

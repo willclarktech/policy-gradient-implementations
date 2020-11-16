@@ -24,7 +24,16 @@ def run(options: Dict[str, Any]) -> None:
     if hasattr(options, "seed") and options["seed"] is not None:
         set_seed(options["seed"])
 
-    algorithm_name = options.pop("algorithm")
+    try:
+        load_dir = options.pop("load_dir")
+    except:
+        load_dir = None
+    try:
+        save_dir = options.pop("save_dir")
+    except:
+        save_dir = None
+
+    algorithm_name = options["algorithm"]
     algorithm = algorithms[algorithm_name]
     if algorithm is None:
         raise ValueError(f"Experiment {algorithm_name} not recognized")
@@ -36,9 +45,15 @@ def run(options: Dict[str, Any]) -> None:
 
     hyperparameters = Hyperparameters(**hyperparameter_args)
     agent = algorithm.Agent(hyperparameters)  # type: ignore
+    if load_dir is not None:
+        print(f"Loading model from {load_dir}...")
+        agent.load(load_dir)
+        print("Successfully loaded model")
 
     print(f"Algorithm: {algorithm_name}")
     print("Hyperparameters:")
     pprint(hyperparameter_args)
 
-    train(agent, hyperparameters, algorithm.run_episode)  # type: ignore
+    print("Starting training...")
+    train(agent, hyperparameters, algorithm.run_episode, save_dir)  # type: ignore
+    print("Finished training")

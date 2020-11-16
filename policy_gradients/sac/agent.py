@@ -16,7 +16,7 @@ from policy_gradients.sac.value import Value
 
 class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters) -> None:
-        super(Agent, self).__init__()
+        super(Agent, self).__init__(hyperparameters)
         self.gamma = hyperparameters.gamma
         self.reward_scale = hyperparameters.reward_scale
         self.tau = hyperparameters.tau
@@ -147,3 +147,23 @@ class Agent(BaseAgent):
         self.update_critics(observation, action, reward, observation_, done)
         self.update_actor(observation)
         self.update_value_target(tau=self.tau)
+
+    def load(self, load_dir: str) -> None:
+        self.actor.load_state_dict(T.load(self.get_savefile_name(load_dir, "actor")))
+        self.critic_1.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "critic_1"))
+        )
+        self.critic_2.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "critic_2"))
+        )
+        self.value.load_state_dict(T.load(self.get_savefile_name(load_dir, "value")))
+
+        self.value_target.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "value"))
+        )
+
+    def save(self, save_dir: str) -> None:
+        T.save(self.actor.state_dict(), self.get_savefile_name(save_dir, "actor"))
+        T.save(self.critic_1.state_dict(), self.get_savefile_name(save_dir, "critic_1"))
+        T.save(self.critic_2.state_dict(), self.get_savefile_name(save_dir, "critic_2"))
+        T.save(self.value.state_dict(), self.get_savefile_name(save_dir, "value"))

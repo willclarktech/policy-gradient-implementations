@@ -19,7 +19,7 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
 
 class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters,) -> None:
-        super(Agent, self).__init__()
+        super(Agent, self).__init__(hyperparameters)
 
         self.gamma = hyperparameters.gamma
         in_features = hyperparameters.env.observation_space.shape[0]
@@ -75,3 +75,15 @@ class Agent(BaseAgent):
         loss = actor_loss + critic_loss
         loss.backward()
         self.optimizer.step()
+
+    def load(self, load_dir: str) -> None:
+        self.network.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "network"))
+        )
+        self.V.load_state_dict(T.load(self.get_savefile_name(load_dir, "V")))
+        self.pi.load_state_dict(T.load(self.get_savefile_name(load_dir, "pi")))
+
+    def save(self, save_dir: str) -> None:
+        T.save(self.network.state_dict(), self.get_savefile_name(save_dir, "network"))
+        T.save(self.V.state_dict(), self.get_savefile_name(save_dir, "V"))
+        T.save(self.pi.state_dict(), self.get_savefile_name(save_dir, "pi"))

@@ -57,5 +57,9 @@ def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:
         type=float,
         help="noise clip to use during action selection (eg for deterministic algorithms like TD3)",
     )
+    parser.add_argument("--save_dir", help="directory for saving model files")
+    parser.add_argument(
+        "--load_dir", help="directory for loading pre-trained model files"
+    )
 
     return parser

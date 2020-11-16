@@ -11,6 +11,7 @@ class Hyperparameters:
     def __init__(
         self,
         seed: Optional[int] = None,
+        algorithm: str = "",
         env_name: str = "",
         n_episodes: int = 0,
         log_period: int = 1,
@@ -27,8 +28,11 @@ class Hyperparameters:
         noise: float = 0.0,
         noise_clip: float = 0.0,
         l2_weight_decay: float = 0.0,
+        save_dir: Optional[str] = None,
     ) -> None:
         self.seed = seed
+        self.algorithm = algorithm
+        self.env_name = env_name
         self.env = gym.make(env_name)
         self.env.seed(self.seed)
 
@@ -52,20 +56,36 @@ class Hyperparameters:
 
         self.l2_weight_decay = l2_weight_decay
 
+        self.save_dir = save_dir
+
 
 class BaseAgent:
-    def __init__(self) -> None:
+    def __init__(self, hyperparameters: Hyperparameters) -> None:
         self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
+        self.algorithm = hyperparameters.algorithm
+        self.env_name = hyperparameters.env_name
 
     def process(self, observation: np.ndarray, dtype: T.dtype = T.float32) -> T.Tensor:
         return T.tensor(observation, dtype=dtype).to(self.device)
+
+    def get_savefile_name(self, dirname: str, component: str) -> str:
+        return f"{dirname}/{self.algorithm}_{self.env_name}_{component}.zip"
+
+    def load(self, load_dir: str) -> None:
+        raise NotImplementedError("load method not implemented")
+
+    def save(self, save_dir: str) -> None:
+        raise NotImplementedError("save method not implemented")
 
 
 EpisodeRunner = Callable[[BaseAgent, Hyperparameters], float]
 
 
 def train(
-    agent: BaseAgent, hyperparameters: Hyperparameters, run_episode: EpisodeRunner
+    agent: BaseAgent,
+    hyperparameters: Hyperparameters,
+    run_episode: EpisodeRunner,
+    save_dir: Optional[str] = None,
 ) -> None:
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period
@@ -82,5 +102,8 @@ def train(
 
         if i % log_period == 0:
             print(f"Episode {i}; Return {ret}; Average return {average_return}")
+
+    if save_dir is not None:
+        agent.save(save_dir)
 
     plot_returns(returns, average_returns)
