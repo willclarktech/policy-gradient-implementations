@@ -20,19 +20,19 @@ algorithms = {
 }
 
 
-def run(cli_args: Dict[str, Any]) -> None:
-    if hasattr(cli_args, "seed") and cli_args["seed"] is not None:
-        set_seed(cli_args["seed"])
+def run(options: Dict[str, Any]) -> None:
+    if hasattr(options, "seed") and options["seed"] is not None:
+        set_seed(options["seed"])
 
-    algorithm_name = cli_args.pop("algorithm")
+    algorithm_name = options.pop("algorithm")
     algorithm = algorithms[algorithm_name]
     if algorithm is None:
         raise ValueError(f"Experiment {algorithm_name} not recognized")
 
     hyperparameter_args = algorithm.default_hyperparameters()  # type: ignore
-    for key in cli_args:
-        if cli_args[key] is not None:
-            hyperparameter_args[key] = cli_args[key]
+    for key in options:
+        if options[key] is not None:
+            hyperparameter_args[key] = options[key]
 
     hyperparameters = Hyperparameters(**hyperparameter_args)
     agent = algorithm.Agent(hyperparameters)  # type: ignore
