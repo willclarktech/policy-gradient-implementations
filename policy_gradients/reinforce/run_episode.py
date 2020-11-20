@@ -21,4 +21,5 @@ def run_episode(agent: Agent, hyperparameters: Hyperparameters) -> float:
         agent.remember(log_probability, reward)
         observation = observation_
 
+    agent.update()
     return ret
