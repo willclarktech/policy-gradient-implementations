@@ -149,18 +149,23 @@ class Agent(BaseAgent):
         self.update_value_target(tau=self.tau)
 
     def load(self, load_dir: str) -> None:
-        self.actor.load_state_dict(T.load(self.get_savefile_name(load_dir, "actor")))
-        self.critic_1.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "critic_1"))
+        actor_state_dict = T.load(
+            self.get_savefile_name(load_dir, "actor"), map_location=self.device
         )
-        self.critic_2.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "critic_2"))
+        critic_1_state_dict = T.load(
+            self.get_savefile_name(load_dir, "critic_1"), map_location=self.device
         )
-        self.value.load_state_dict(T.load(self.get_savefile_name(load_dir, "value")))
-
-        self.value_target.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "value"))
+        critic_2_state_dict = T.load(
+            self.get_savefile_name(load_dir, "critic_2"), map_location=self.device
         )
+        value_state_dict = T.load(
+            self.get_savefile_name(load_dir, "value"), map_location=self.device
+        )
+        self.actor.load_state_dict(actor_state_dict)
+        self.critic_1.load_state_dict(critic_1_state_dict)
+        self.critic_2.load_state_dict(critic_2_state_dict)
+        self.value.load_state_dict(value_state_dict)
+        self.value_target.load_state_dict(value_state_dict)
 
     def save(self, save_dir: str) -> None:
         T.save(self.actor.state_dict(), self.get_savefile_name(save_dir, "actor"))

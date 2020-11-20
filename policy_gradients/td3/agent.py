@@ -127,23 +127,22 @@ class Agent(BaseAgent):
             self.update_target_networks(self.tau)
 
     def load(self, load_dir: str) -> None:
-        self.actor.load_state_dict(T.load(self.get_savefile_name(load_dir, "actor")))
-        self.critic_1.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "critic_1"))
+        actor_state_dict = T.load(
+            self.get_savefile_name(load_dir, "actor"), map_location=self.device
         )
-        self.critic_2.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "critic_2"))
+        critic_1_state_dict = T.load(
+            self.get_savefile_name(load_dir, "critic_1"), map_location=self.device
         )
+        critic_2_state_dict = T.load(
+            self.get_savefile_name(load_dir, "critic_2"), map_location=self.device
+        )
+        self.actor.load_state_dict(actor_state_dict)
+        self.critic_1.load_state_dict(critic_1_state_dict)
+        self.critic_2.load_state_dict(critic_2_state_dict)
 
-        self.actor_target.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "actor"))
-        )
-        self.critic_1_target.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "critic_1"))
-        )
-        self.critic_2_target.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "critic_2"))
-        )
+        self.actor_target.load_state_dict(actor_state_dict)
+        self.critic_1_target.load_state_dict(critic_1_state_dict)
+        self.critic_2_target.load_state_dict(critic_2_state_dict)
 
     def save(self, save_dir: str) -> None:
         T.save(self.actor.state_dict(), self.get_savefile_name(save_dir, "actor"))

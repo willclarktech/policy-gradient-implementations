@@ -62,7 +62,9 @@ class Agent(BaseAgent):
         self.optimizer.step()
 
     def load(self, load_dir: str) -> None:
-        self.policy.load_state_dict(T.load(self.get_savefile_name(load_dir, "policy")))
+        self.policy.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "policy"), map_location=self.device)
+        )
 
     def save(self, save_dir: str) -> None:
         T.save(self.policy.state_dict(), self.get_savefile_name(save_dir, "policy"))

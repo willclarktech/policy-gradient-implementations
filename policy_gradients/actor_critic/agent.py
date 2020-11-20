@@ -78,10 +78,16 @@ class Agent(BaseAgent):
 
     def load(self, load_dir: str) -> None:
         self.network.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "network"))
+            T.load(
+                self.get_savefile_name(load_dir, "network"), map_location=self.device
+            )
         )
-        self.V.load_state_dict(T.load(self.get_savefile_name(load_dir, "V")))
-        self.pi.load_state_dict(T.load(self.get_savefile_name(load_dir, "pi")))
+        self.V.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "V"), map_location=self.device)
+        )
+        self.pi.load_state_dict(
+            T.load(self.get_savefile_name(load_dir, "pi"), map_location=self.device)
+        )
 
     def save(self, save_dir: str) -> None:
         T.save(self.network.state_dict(), self.get_savefile_name(save_dir, "network"))

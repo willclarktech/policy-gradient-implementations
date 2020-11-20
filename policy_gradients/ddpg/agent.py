@@ -116,14 +116,16 @@ class Agent(BaseAgent):
         self.update_target_networks(self.tau)
 
     def load(self, load_dir: str) -> None:
-        self.actor.load_state_dict(T.load(self.get_savefile_name(load_dir, "actor")))
-        self.critic.load_state_dict(T.load(self.get_savefile_name(load_dir, "critic")))
-        self.actor_target.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "actor"))
+        actor_state_dict = T.load(
+            self.get_savefile_name(load_dir, "actor"), map_location=self.device
         )
-        self.critic_target.load_state_dict(
-            T.load(self.get_savefile_name(load_dir, "critic"))
+        critic_state_dict = T.load(
+            self.get_savefile_name(load_dir, "critic"), map_location=self.device
         )
+        self.actor.load_state_dict(actor_state_dict)
+        self.critic.load_state_dict(critic_state_dict)
+        self.actor_target.load_state_dict(actor_state_dict)
+        self.critic_target.load_state_dict(critic_state_dict)
 
     def save(self, save_dir: str) -> None:
         T.save(self.actor.state_dict(), self.get_savefile_name(save_dir, "actor"))
