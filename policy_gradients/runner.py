@@ -1,7 +1,7 @@
 from pprint import pprint
 from typing import Any, Dict
 
-from policy_gradients.core import Hyperparameters, train
+from policy_gradients.core import BaseAgent, Hyperparameters, train
 from policy_gradients.parser import create_parser
 from policy_gradients.utils import set_seed
 
@@ -20,7 +20,7 @@ algorithms = {
 }
 
 
-def run(options: Dict[str, Any]) -> None:
+def run(options: Dict[str, Any]) -> BaseAgent:
     if hasattr(options, "seed") and options["seed"] is not None:
         set_seed(options["seed"])
 
@@ -45,6 +45,7 @@ def run(options: Dict[str, Any]) -> None:
 
     hyperparameters = Hyperparameters(**hyperparameter_args)
     agent = algorithm.Agent(hyperparameters)  # type: ignore
+
     if load_dir is not None:
         print(f"Loading model from {load_dir}...")
         agent.load(load_dir)
@@ -57,3 +58,8 @@ def run(options: Dict[str, Any]) -> None:
     print("Starting training...")
     train(agent, hyperparameters, algorithm.run_episode, save_dir)  # type: ignore
     print("Finished training")
+
+    if save_dir is not None:
+        agent.save(save_dir)
+
+    return agent
