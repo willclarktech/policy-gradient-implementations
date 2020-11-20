@@ -16,3 +16,6 @@ jupyter = "*"
 
 [requires]
 python_version = "3.6"
+
+[scripts]
+reqs = "./scripts/generate_requirements.sh"
