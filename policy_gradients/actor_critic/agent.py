@@ -36,10 +36,10 @@ class Agent(BaseAgent):
                 for i, _ in enumerate(hidden_features[:-1])
             ],
         ).to(self.device)
-        self.V = nn.Linear(hidden_features[-1], 1)
+        self.V = nn.Linear(hidden_features[-1], 1).to(self.device)
         self.pi = nn.Sequential(
             nn.Linear(hidden_features[-1], num_actions), nn.Softmax(dim=-1),
-        )
+        ).to(self.device)
         self.optimizer = optim.Adam(
             [*self.network.parameters(), *self.V.parameters()], lr=hyperparameters.alpha
         )
