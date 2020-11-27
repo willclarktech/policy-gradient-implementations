@@ -69,7 +69,7 @@ class BaseAgent:
         return T.tensor(observation, dtype=dtype).to(self.device)
 
     def get_savefile_name(self, dirname: str, component: str) -> str:
-        return f"{dirname}/{self.algorithm}_{self.env_name}_{component}.zip"
+        return f"{dirname}/{self.algorithm}_{self.env_name}/{component}.zip"
 
     def load(self, load_dir: str) -> None:
         raise NotImplementedError("load method not implemented")
