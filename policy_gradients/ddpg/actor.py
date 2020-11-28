@@ -16,17 +16,17 @@ class Actor(nn.Module):
     ) -> None:
         super(Actor, self).__init__()
 
-        # Bias is meaningless if followed by BatchNorm
-        self.fc1 = nn.Linear(in_features, hidden_features[0], False)
-        self.fc2 = nn.Linear(hidden_features[0], hidden_features[1], False)
+        self.fc1 = nn.Linear(in_features, hidden_features[0])
+        self.fc2 = nn.Linear(hidden_features[0], hidden_features[1])
         self.fc3 = nn.Linear(hidden_features[1], action_dims)
 
+        # NOTE: he DDPG paper uses BatchNorm but PyTorch seems to have some problems
         self.network = nn.Sequential(
             self.fc1,
-            nn.BatchNorm1d(hidden_features[0]),
+            nn.LayerNorm(hidden_features[0]),
             nn.ReLU(),
             self.fc2,
-            nn.BatchNorm1d(hidden_features[1]),
+            nn.LayerNorm(hidden_features[1]),
             nn.ReLU(),
             self.fc3,
             nn.Tanh(),
@@ -39,6 +39,7 @@ class Actor(nn.Module):
         for layer in [self.fc1, self.fc2]:
             bound = 1.0 / np.sqrt(layer.in_features)
             init.uniform_(layer.weight, -bound, bound)
+            init.uniform_(layer.bias, -bound, bound)
 
         out_bound = 3e-3
         init.uniform_(self.fc3.weight, -out_bound, out_bound)
