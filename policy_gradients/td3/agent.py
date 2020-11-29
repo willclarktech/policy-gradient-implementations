@@ -95,10 +95,14 @@ class Agent(BaseAgent):
         self.critic_2.train()
         with T.no_grad():
             raw_target_action = self.actor_target(observation_)
-            target_action_noise = T.tensor(
-                np.random.normal(0, self.noise, raw_target_action.shape),
-                dtype=T.float32,
-            ).clamp(-self.noise_clip, self.noise_clip)
+            target_action_noise = (
+                T.tensor(
+                    np.random.normal(0, self.noise, raw_target_action.shape),
+                    dtype=T.float32,
+                )
+                .clamp(-self.noise_clip, self.noise_clip)
+                .to(self.device)
+            )
             noisy_target_action = raw_target_action + target_action_noise
             target_action = noisy_target_action.clamp(
                 self.min_action[0], self.max_action[0]
