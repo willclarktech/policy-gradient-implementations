@@ -1,3 +1,4 @@
+from datetime import datetime
 import gym  # type: ignore
 import numpy as np  # type: ignore
 import pybullet_envs  # type: ignore
@@ -101,7 +102,9 @@ def train(
         average_returns.append(average_return)
 
         if i % log_period == 0:
-            print(f"Episode {i}; Return {ret}; Average return {average_return}")
+            print(
+                f"[{datetime.now().isoformat(timespec='seconds')}] Episode {i}; Return {ret}; Average return {average_return}"
+            )
 
     if save_dir is not None:
         agent.save(save_dir)
