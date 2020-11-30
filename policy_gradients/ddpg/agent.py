@@ -46,7 +46,7 @@ class Agent(BaseAgent):
             hyperparameters.seed,
         )
         mu = np.zeros(action_dims[0])
-        self.noise = OrnsteinUhlenbeckNoise(mu)
+        self.noise = OrnsteinUhlenbeckNoise(mu, seed=hyperparameters.seed)
 
         alpha = hyperparameters.alpha
         beta = hyperparameters.beta

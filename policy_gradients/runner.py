@@ -20,7 +20,7 @@ algorithms = {
 
 
 def run(options: Dict[str, Any]) -> BaseAgent:
-    if hasattr(options, "seed") and options["seed"] is not None:
+    if "seed" in options and options["seed"] is not None:
         set_seed(options["seed"])
 
     load_dir = options.pop("load_dir", None)

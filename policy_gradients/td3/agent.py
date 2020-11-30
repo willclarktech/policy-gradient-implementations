@@ -58,6 +58,7 @@ class Agent(BaseAgent):
             in_dims[0], action_dims[0], hidden_features, alpha
         ).to(self.device)
         self.update_target_networks(tau=1)
+        self.rng = np.random.default_rng(hyperparameters.seed)
 
     def update_target_networks(self, tau: float) -> None:
         update_target_network(self.critic_1_target, self.critic_1, tau)
@@ -70,7 +71,7 @@ class Agent(BaseAgent):
             raw_action = (
                 self.actor(self.process([observation])).flatten().detach().cpu().numpy()
             )
-            noisy_action = raw_action + np.random.normal(0, self.noise, raw_action.size)
+            noisy_action = raw_action + self.rng.normal(0, self.noise, raw_action.size)
             return noisy_action.clip(self.min_action, self.max_action)
 
     def remember(
@@ -99,7 +100,7 @@ class Agent(BaseAgent):
             raw_target_action = self.actor_target(observation_)
             target_action_noise = (
                 T.tensor(
-                    np.random.normal(0, self.noise, raw_target_action.shape),
+                    self.rng.normal(0, self.noise, raw_target_action.shape),
                     dtype=T.float32,
                 )
                 .clamp(-self.noise_clip, self.noise_clip)
