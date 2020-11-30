@@ -9,6 +9,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 from policy_gradients.core import BaseAgent, Hyperparameters
+from policy_gradients.utils import mlp
 
 
 def calculate_return(rewards: List[float], gamma: float) -> float:
@@ -35,13 +36,9 @@ class Agent(BaseAgent):
         self.rewards: List[float]
         self.log_probabilities: T.Tensor
 
-        self.policy = nn.Sequential(
-            nn.Linear(in_features, hidden_features[0]),
-            nn.ReLU(),
-            nn.Linear(hidden_features[0], hidden_features[1]),
-            nn.ReLU(),
-            nn.Linear(hidden_features[1], num_actions),
-        ).to(self.device)
+        self.policy = mlp([in_features, *hidden_features, num_actions], nn.ReLU).to(
+            self.device
+        )
         self.optimizer = optim.Adam(self.policy.parameters(), lr=hyperparameters.alpha)
 
     def reset(self) -> None:

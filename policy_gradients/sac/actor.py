@@ -5,6 +5,8 @@ import torch.distributions as distributions
 import torch.nn as nn
 import torch.optim as optim
 
+from policy_gradients.utils import mlp
+
 
 class Actor(nn.Module):
     # pylint: disable=invalid-name,too-many-arguments
@@ -18,14 +20,9 @@ class Actor(nn.Module):
     ) -> None:
         super().__init__()
         self.epsilon = epsilon
-        self.shared = nn.Sequential(
-            nn.Linear(in_features, hidden_features[0]),
-            nn.ReLU(),
-            nn.Linear(hidden_features[0], hidden_features[1]),
-            nn.ReLU(),
-        )
-        self.mu = nn.Linear(hidden_features[1], action_dims)
-        self.sigma = nn.Linear(hidden_features[1], action_dims)
+        self.shared = mlp([in_features, *hidden_features], nn.ReLU, nn.ReLU)
+        self.mu = nn.Linear(hidden_features[-1], action_dims)
+        self.sigma = nn.Linear(hidden_features[-1], action_dims)
         self.optimizer = optim.Adam(self.parameters(), lr=alpha)
 
     def forward(self, observation: T.Tensor) -> Tuple[T.Tensor, T.Tensor]:

@@ -1,11 +1,26 @@
 import os
 import random
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 import torch as T
 import torch.nn as nn
+
+
+def mlp(
+    features: List[int],
+    activation: Callable[[], nn.Module],
+    final_activation: Callable[[], nn.Module] = nn.Identity,
+) -> nn.Module:
+    return nn.Sequential(
+        *[
+            nn.Sequential(nn.Linear(features[i], features[i + 1]), activation())
+            for i, _ in enumerate(features[:-2])
+        ],
+        nn.Linear(features[-2], features[-1]),
+        final_activation(),
+    )
 
 
 def plot_returns(

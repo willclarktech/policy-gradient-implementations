@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from policy_gradients.core import BaseAgent, Hyperparameters
+from policy_gradients.utils import mlp
 
 
 def calculate_return(rewards: List[float], gamma: float) -> float:
@@ -31,16 +32,9 @@ class Agent(BaseAgent):
         num_actions = env.action_space.n
         hidden_features = hyperparameters.hidden_features
 
-        self.network = nn.Sequential(
-            nn.Linear(in_features, hidden_features[0]),
-            nn.ReLU(),
-            *[
-                nn.Sequential(
-                    nn.Linear(hidden_features[i], hidden_features[i + 1]), nn.ReLU()
-                )
-                for i, _ in enumerate(hidden_features[:-1])
-            ],
-        ).to(self.device)
+        self.network = mlp([in_features, *hidden_features], nn.ReLU, nn.ReLU).to(
+            self.device
+        )
         self.V = nn.Linear(hidden_features[-1], 1).to(self.device)
         self.pi = nn.Sequential(
             nn.Linear(hidden_features[-1], num_actions), nn.Softmax(dim=-1),

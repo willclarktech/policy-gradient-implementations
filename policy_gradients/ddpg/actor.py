@@ -17,34 +17,32 @@ class Actor(nn.Module):
     ) -> None:
         super().__init__()
 
-        self.fc1 = nn.Linear(in_features, hidden_features[0])
-        self.fc2 = nn.Linear(hidden_features[0], hidden_features[1])
-        self.fc3 = nn.Linear(hidden_features[1], action_dims)
+        features = [in_features, *hidden_features, action_dims]
+        self.fcs = [
+            nn.Linear(features[i], features[i + 1]) for i, _ in enumerate(features[:-1])
+        ]
 
-        # NOTE: he DDPG paper uses BatchNorm but PyTorch seems to have some problems
+        # NOTE: The DDPG paper uses BatchNorm but PyTorch seems to have some problems
         self.network = nn.Sequential(
-            self.fc1,
-            nn.LayerNorm(hidden_features[0]),
-            nn.ReLU(),
-            self.fc2,
-            nn.LayerNorm(hidden_features[1]),
-            nn.ReLU(),
-            self.fc3,
-            nn.Tanh(),
+            *[
+                nn.Sequential(fc, nn.LayerNorm(hidden_features[i]), nn.ReLU(),)
+                for i, fc in enumerate(self.fcs[:-1])
+            ],
+            nn.Sequential(self.fcs[-1], nn.Tanh(),)
         )
 
         self.initialize_weights()
         self.optimizer = optim.Adam(self.parameters(), lr=alpha)
 
     def initialize_weights(self) -> None:
-        for layer in [self.fc1, self.fc2]:
+        for layer in self.fcs[:-1]:
             bound = 1.0 / np.sqrt(layer.in_features)
             init.uniform_(layer.weight, -bound, bound)
             init.uniform_(layer.bias, -bound, bound)
 
         out_bound = 3e-3
-        init.uniform_(self.fc3.weight, -out_bound, out_bound)
-        init.uniform_(self.fc3.bias, -out_bound, out_bound)
+        init.uniform_(self.fcs[-1].weight, -out_bound, out_bound)
+        init.uniform_(self.fcs[-1].bias, -out_bound, out_bound)
 
     def forward(self, observation: T.Tensor) -> T.Tensor:
         return self.network(observation)

@@ -4,6 +4,8 @@ import torch as T
 import torch.nn as nn
 import torch.optim as optim
 
+from policy_gradients.utils import mlp
+
 
 class Actor(nn.Module):
     def __init__(
@@ -14,13 +16,8 @@ class Actor(nn.Module):
         alpha: float,
     ) -> None:
         super().__init__()
-        self.network = nn.Sequential(
-            nn.Linear(in_features, hidden_features[0]),
-            nn.ReLU(),
-            nn.Linear(hidden_features[0], hidden_features[1]),
-            nn.ReLU(),
-            nn.Linear(hidden_features[1], action_dims),
-            nn.Tanh(),
+        self.network = mlp(
+            [in_features, *hidden_features, action_dims], nn.ReLU, nn.Tanh
         )
         self.optimizer = optim.Adam(self.parameters(), lr=alpha)
 
