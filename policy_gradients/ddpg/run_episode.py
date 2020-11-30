@@ -7,12 +7,21 @@ from policy_gradients.utils import attempt_with_screen, plot_returns
 from policy_gradients.ddpg.agent import Agent
 
 
-def run_episode(agent: Agent, hyperparameters: Hyperparameters) -> float:
+def run_episode(
+    agent: Agent, hyperparameters: Hyperparameters, should_render: bool = False
+) -> float:
     env = hyperparameters.env
+    # Necessary for pybullet envs
+    if should_render:
+        env.render()
+
     observation = env.reset()
     agent.reset()
     done = False
     ret = 0.0
+
+    if should_render:
+        env.render()
 
     while not done:
         action = agent.choose_action(observation)
@@ -21,5 +30,8 @@ def run_episode(agent: Agent, hyperparameters: Hyperparameters) -> float:
         agent.remember(observation, action, reward, observation_, done)
         observation = observation_
         agent.learn()
+
+        if should_render:
+            env.render()
 
     return ret

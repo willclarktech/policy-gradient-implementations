@@ -32,6 +32,7 @@ def run(options: Dict[str, Any]) -> BaseAgent:
         save_dir = options.pop("save_dir")
     except:
         save_dir = None
+    should_render = options.pop("render")
 
     algorithm_name = options["algorithm"]
     algorithm = algorithms[algorithm_name]
@@ -56,7 +57,7 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     pprint(hyperparameter_args)
 
     print("Starting training...")
-    train(agent, hyperparameters, algorithm.run_episode, save_dir)  # type: ignore
+    train(agent, hyperparameters, algorithm.run_episode, save_dir=save_dir, should_render=should_render)  # type: ignore
     print("Finished training")
 
     if save_dir is not None:

@@ -7,12 +7,21 @@ from policy_gradients.utils import attempt_with_screen, plot_returns
 from policy_gradients.td3.agent import Agent
 
 
-def run_episode(agent: Agent, hyperparameters: Hyperparameters) -> float:
+def run_episode(
+    agent: Agent, hyperparameters: Hyperparameters, should_render: bool = False
+) -> float:
     env = hyperparameters.env
+    # Necessary for pybullet envs
+    if should_render:
+        env.render()
+
     observation = env.reset()
     done = False
     ret = 0.0
     step = 0
+
+    if should_render:
+        env.render()
 
     while not done:
         step += 1
@@ -22,5 +31,8 @@ def run_episode(agent: Agent, hyperparameters: Hyperparameters) -> float:
         agent.remember(observation, action, reward, observation_, done)
         observation = observation_
         agent.learn(step)
+
+        if should_render:
+            env.render()
 
     return ret

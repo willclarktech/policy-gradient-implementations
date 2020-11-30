@@ -61,5 +61,11 @@ def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:
     parser.add_argument(
         "--load_dir", help="directory for loading pre-trained model files"
     )
+    parser.add_argument(
+        "--render",
+        default=False,
+        action="store_true",
+        help="whether to render the environment at each step",
+    )
 
     return parser

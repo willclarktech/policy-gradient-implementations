@@ -79,7 +79,7 @@ class BaseAgent:
         raise NotImplementedError("save method not implemented")
 
 
-EpisodeRunner = Callable[[BaseAgent, Hyperparameters], float]
+EpisodeRunner = Callable[[BaseAgent, Hyperparameters, Optional[bool]], float]
 
 
 def train(
@@ -87,6 +87,7 @@ def train(
     hyperparameters: Hyperparameters,
     run_episode: EpisodeRunner,
     save_dir: Optional[str] = None,
+    should_render: bool = False,
 ) -> None:
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period
@@ -95,7 +96,7 @@ def train(
     average_returns = []
 
     for i in range(1, n_episodes + 1):
-        ret = run_episode(agent, hyperparameters)
+        ret = run_episode(agent, hyperparameters, should_render)
 
         returns.append(ret)
         average_return = np.mean(returns[-100:])
