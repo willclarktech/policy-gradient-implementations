@@ -1,9 +1,7 @@
 from gym import spaces  # type: ignore
 import numpy as np  # type: ignore
 import torch as T
-import torch.nn as nn
 import torch.nn.functional as F
-import torch.distributions as distributions
 
 from policy_gradients.core import BaseAgent, Hyperparameters
 from policy_gradients.replay_buffer import ReplayBuffer
@@ -15,8 +13,9 @@ from policy_gradients.sac.value import Value
 
 
 class Agent(BaseAgent):
+    # pylint: disable=invalid-name,too-many-arguments,too-many-instance-attributes
     def __init__(self, hyperparameters: Hyperparameters) -> None:
-        super(Agent, self).__init__(hyperparameters)
+        super().__init__(hyperparameters)
         self.gamma = hyperparameters.gamma
         self.reward_scale = hyperparameters.reward_scale
         self.tau = hyperparameters.tau

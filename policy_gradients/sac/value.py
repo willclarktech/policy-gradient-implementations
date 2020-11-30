@@ -1,14 +1,15 @@
+from typing import List
+
 import torch as T
 import torch.nn as nn
 import torch.optim as optim
-from typing import List
 
 
 class Value(nn.Module):
     def __init__(
         self, in_features: int, hidden_features: List[int], alpha: float,
     ) -> None:
-        super(Value, self).__init__()
+        super().__init__()
         self.network = nn.Sequential(
             nn.Linear(in_features, hidden_features[0]),
             nn.ReLU(),

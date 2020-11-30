@@ -1,17 +1,11 @@
-import matplotlib.pyplot as plt  # type: ignore
-import numpy as np  # type: ignore
 import os
 import random
+from typing import List, Optional
+
+import matplotlib.pyplot as plt  # type: ignore
+import numpy as np  # type: ignore
 import torch as T
 import torch.nn as nn
-from typing import Any, Callable, List, Optional
-
-
-def attempt_with_screen(f: Callable[[], Any]) -> None:
-    try:
-        f()
-    except:
-        print("Screen unavailable")
 
 
 def plot_returns(

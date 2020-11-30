@@ -1,14 +1,16 @@
 from datetime import datetime
+from typing import Callable, List, Optional
+
 import gym  # type: ignore
 import numpy as np  # type: ignore
-import pybullet_envs  # type: ignore
+import pybullet_envs  # type: ignore # pylint: disable=unused-import
 import torch as T
-from typing import Any, Callable, List, Optional
 
 from policy_gradients.utils import plot_returns
 
 
 class Hyperparameters:
+    # pylint: disable=invalid-name,too-few-public-methods,too-many-arguments,too-many-instance-attributes,too-many-locals
     def __init__(
         self,
         seed: Optional[int] = None,
@@ -16,7 +18,7 @@ class Hyperparameters:
         env_name: str = "",
         n_episodes: int = 0,
         log_period: int = 1,
-        hidden_features: List[int] = [],
+        hidden_features: Optional[List[int]] = None,
         alpha: float = 1.0,
         beta: float = 1.0,
         gamma: float = 1.0,
@@ -40,7 +42,7 @@ class Hyperparameters:
         self.n_episodes = n_episodes
         self.log_period = log_period
 
-        self.hidden_features = hidden_features
+        self.hidden_features = hidden_features if hidden_features is not None else []
         self.alpha = alpha
         self.beta = beta
         self.gamma = gamma
@@ -67,7 +69,9 @@ class BaseAgent:
         self.env_name = hyperparameters.env_name
 
     def process(self, observation: np.ndarray, dtype: T.dtype = T.float32) -> T.Tensor:
+        # pylint: disable=not-callable
         return T.tensor(observation, dtype=dtype).to(self.device)
+        # pylint: enable=not-callable
 
     def get_savefile_name(self, dirname: str, component: str) -> str:
         return f"{dirname}/{self.algorithm}_{self.env_name}/{component}.zip"

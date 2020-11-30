@@ -1,10 +1,12 @@
+from typing import Optional, Tuple
+
 import numpy as np  # type: ignore
-from typing import List, Optional, Tuple
 
 Sample = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]
 
 
 class ReplayBuffer:
+    # pylint: disable=too-many-arguments,too-many-instance-attributes
     def __init__(
         self,
         capacity: int,

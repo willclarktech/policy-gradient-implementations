@@ -1,12 +1,14 @@
+from typing import List
+
 import numpy as np  # type: ignore
 import torch as T
 import torch.nn as nn
 import torch.nn.init as init
 import torch.optim as optim
-from typing import List
 
 
 class Critic(nn.Module):
+    # pylint: disable=invalid-name,too-many-arguments
     def __init__(
         self,
         in_features: int,
@@ -15,7 +17,7 @@ class Critic(nn.Module):
         beta: float,
         l2_weight_decay: float,
     ) -> None:
-        super(Critic, self).__init__()
+        super().__init__()
 
         self.fc1 = nn.Linear(in_features, hidden_features[0])
         self.fc2 = nn.Linear(hidden_features[0], hidden_features[1])

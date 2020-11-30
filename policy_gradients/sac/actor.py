@@ -1,11 +1,13 @@
+from typing import List, Tuple
+
 import torch as T
 import torch.distributions as distributions
 import torch.nn as nn
 import torch.optim as optim
-from typing import List, Tuple
 
 
 class Actor(nn.Module):
+    # pylint: disable=invalid-name,too-many-arguments
     def __init__(
         self,
         in_features: int,
@@ -14,7 +16,7 @@ class Actor(nn.Module):
         alpha: float,
         epsilon: float,
     ) -> None:
-        super(Actor, self).__init__()
+        super().__init__()
         self.epsilon = epsilon
         self.shared = nn.Sequential(
             nn.Linear(in_features, hidden_features[0]),

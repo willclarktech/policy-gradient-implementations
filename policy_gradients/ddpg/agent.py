@@ -23,8 +23,9 @@ def update_target_network(
 
 
 class Agent(BaseAgent):
+    # pylint: disable=invalid-name,too-many-arguments,too-many-instance-attributes
     def __init__(self, hyperparameters: Hyperparameters) -> None:
-        super(Agent, self).__init__(hyperparameters)
+        super().__init__(hyperparameters)
         self.gamma = T.scalar_tensor(hyperparameters.gamma).to(self.device)
         self.tau = hyperparameters.tau
         self.batch_size = hyperparameters.batch_size

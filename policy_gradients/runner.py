@@ -2,7 +2,6 @@ from pprint import pprint
 from typing import Any, Dict
 
 from policy_gradients.core import BaseAgent, Hyperparameters, train
-from policy_gradients.parser import create_parser
 from policy_gradients.utils import set_seed
 
 import policy_gradients.actor_critic as actor_critic
@@ -24,15 +23,9 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     if hasattr(options, "seed") and options["seed"] is not None:
         set_seed(options["seed"])
 
-    try:
-        load_dir = options.pop("load_dir")
-    except:
-        load_dir = None
-    try:
-        save_dir = options.pop("save_dir")
-    except:
-        save_dir = None
-    should_render = options.pop("render")
+    load_dir = options.pop("load_dir", None)
+    save_dir = options.pop("save_dir", None)
+    should_render = options.pop("render", False)
 
     algorithm_name = options["algorithm"]
     algorithm = algorithms[algorithm_name]

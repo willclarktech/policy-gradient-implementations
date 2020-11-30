@@ -1,8 +1,10 @@
-import numpy as np  # type: ignore
 from typing import Optional
+
+import numpy as np  # type: ignore
 
 
 class OrnsteinUhlenbeckNoise:
+    # pylint: disable=invalid-name,too-many-arguments
     def __init__(
         self,
         mu: np.ndarray,

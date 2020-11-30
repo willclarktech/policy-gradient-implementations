@@ -1,9 +1,10 @@
+from typing import List
+
 import numpy as np  # type: ignore
 import torch as T
 import torch.nn as nn
 import torch.nn.init as init
 import torch.optim as optim
-from typing import List
 
 
 class Actor(nn.Module):
@@ -14,7 +15,7 @@ class Actor(nn.Module):
         hidden_features: List[int],
         alpha: float,
     ) -> None:
-        super(Actor, self).__init__()
+        super().__init__()
 
         self.fc1 = nn.Linear(in_features, hidden_features[0])
         self.fc2 = nn.Linear(hidden_features[0], hidden_features[1])

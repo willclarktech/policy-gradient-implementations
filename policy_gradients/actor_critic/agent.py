@@ -1,11 +1,11 @@
+from typing import List, Tuple
+
 from gym import spaces  # type: ignore
 import numpy as np  # type: ignore
 import torch as T
 import torch.distributions as distributions
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
-from typing import List, Tuple
 
 from policy_gradients.core import BaseAgent, Hyperparameters
 
@@ -19,8 +19,9 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
 
 
 class Agent(BaseAgent):
+    # pylint: disable=invalid-name,too-many-arguments
     def __init__(self, hyperparameters: Hyperparameters,) -> None:
-        super(Agent, self).__init__(hyperparameters)
+        super().__init__(hyperparameters)
         self.gamma = hyperparameters.gamma
 
         env = hyperparameters.env

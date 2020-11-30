@@ -1,5 +1,5 @@
 import argparse
-from typing import List, Iterable
+from typing import Iterable
 
 
 def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:

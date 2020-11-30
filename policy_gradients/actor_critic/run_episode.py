@@ -1,8 +1,4 @@
-import numpy as np  # type: ignore
-
 from policy_gradients.core import Hyperparameters
-from policy_gradients.utils import plot_returns
-
 from policy_gradients.actor_critic.agent import Agent
 
 

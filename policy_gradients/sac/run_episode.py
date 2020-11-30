@@ -1,8 +1,4 @@
-import numpy as np  # type: ignore
-
 from policy_gradients.core import Hyperparameters
-from policy_gradients.utils import attempt_with_screen, plot_returns
-
 from policy_gradients.sac.agent import Agent
 
 

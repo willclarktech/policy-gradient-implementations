@@ -1,7 +1,6 @@
 from gym import spaces  # type: ignore
 import numpy as np  # type: ignore
 import torch as T
-import torch.nn as nn
 import torch.nn.functional as F
 
 from policy_gradients.core import BaseAgent, Hyperparameters
@@ -13,8 +12,9 @@ from policy_gradients.td3.critic import Critic
 
 
 class Agent(BaseAgent):
+    # pylint: disable=invalid-name,not-callable,too-many-arguments,too-many-instance-attributes,too-many-locals
     def __init__(self, hyperparameters: Hyperparameters) -> None:
-        super(Agent, self).__init__(hyperparameters)
+        super().__init__(hyperparameters)
 
         env = hyperparameters.env
         if not isinstance(env.action_space, spaces.Box):
