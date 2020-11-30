@@ -67,5 +67,11 @@ def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:
         action="store_true",
         help="whether to render the environment at each step",
     )
+    parser.add_argument(
+        "--trace",
+        default=False,
+        action="store_true",
+        help="whether to show stacktrace on error",
+    )
 
     return parser
