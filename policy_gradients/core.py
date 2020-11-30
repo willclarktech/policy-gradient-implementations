@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
@@ -68,9 +68,18 @@ class BaseAgent:
         self.algorithm = hyperparameters.algorithm
         self.env_name = hyperparameters.env_name
 
-    def process(self, observation: np.ndarray, dtype: T.dtype = T.float32) -> T.Tensor:
+    def process(
+        self,
+        observation: Union[List[List[float]], np.ndarray, T.Tensor],
+        dtype: T.dtype = T.float32,
+    ) -> T.Tensor:
         # pylint: disable=not-callable
-        return T.tensor(observation, dtype=dtype).to(self.device)
+        tensor = (
+            observation.clone().detach()
+            if isinstance(observation, T.Tensor)
+            else T.tensor(observation, dtype=dtype)
+        )
+        return tensor.to(self.device)
         # pylint: enable=not-callable
 
     def get_savefile_name(self, dirname: str, component: str) -> str:
