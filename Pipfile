@@ -21,3 +21,4 @@ python_version = "3.6"
 [scripts]
 reqs = "./scripts/generate_requirements.sh"
 lint = "pylint ./policy_gradients"
+typecheck = "mypy"
