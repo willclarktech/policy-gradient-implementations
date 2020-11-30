@@ -25,6 +25,8 @@ class Agent(BaseAgent):
         env = hyperparameters.env
         if not isinstance(env.action_space, spaces.Box):
             raise ValueError("This agent only supports box action spaces")
+        self.min_action = env.action_space.low
+        self.max_action = env.action_space.high
         in_dims = env.observation_space.shape
         action_dims = env.action_space.shape
         hidden_features = hyperparameters.hidden_features
@@ -57,8 +59,9 @@ class Agent(BaseAgent):
 
     def choose_action(self, observation: np.ndarray) -> np.ndarray:
         inp = self.process([observation])
-        action, _ = self.actor.sample(inp, reparameterize=False)
-        return action.cpu().detach().numpy()[0]
+        raw_action, _ = self.actor.sample(inp, reparameterize=False)
+        detached_action = raw_action.cpu().detach().numpy()[0]
+        return detached_action.clip(self.min_action, self.max_action)
 
     def remember(
         self,

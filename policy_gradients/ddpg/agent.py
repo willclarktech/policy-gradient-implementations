@@ -33,6 +33,8 @@ class Agent(BaseAgent):
         env = hyperparameters.env
         if not isinstance(env.action_space, spaces.Box):
             raise ValueError("This agent only supports box action spaces")
+        self.min_action = env.action_space.low
+        self.max_action = env.action_space.high
         in_dims = env.observation_space.shape
         action_dims = env.action_space.shape
         hidden_features = hyperparameters.hidden_features
@@ -74,7 +76,8 @@ class Agent(BaseAgent):
         self.actor.eval()
         with T.no_grad():
             mu = self.actor(self.process([observation]))
-            return mu.flatten().detach().cpu().numpy() + self.noise()
+            noisy_action = mu.flatten().detach().cpu().numpy() + self.noise()
+            return noisy_action.clip(self.min_action, self.max_action)
 
     def remember(
         self,
