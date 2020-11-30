@@ -1,4 +1,4 @@
-import gym  # type: ignore
+from gym import spaces  # type: ignore
 import numpy as np  # type: ignore
 import torch as T
 import torch.nn as nn
@@ -17,6 +17,8 @@ class Agent(BaseAgent):
         super(Agent, self).__init__(hyperparameters)
 
         env = hyperparameters.env
+        if not isinstance(env.action_space, spaces.Box):
+            raise ValueError("This agent only supports box action spaces")
         self.min_action = env.action_space.low
         self.max_action = env.action_space.high
         in_dims = env.observation_space.shape

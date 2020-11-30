@@ -1,3 +1,4 @@
+from gym import spaces  # type: ignore
 import numpy as np  # type: ignore
 import torch as T
 import torch.distributions as distributions
@@ -20,10 +21,13 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
 class Agent(BaseAgent):
     def __init__(self, hyperparameters: Hyperparameters,) -> None:
         super(Agent, self).__init__(hyperparameters)
-
         self.gamma = hyperparameters.gamma
-        in_features = hyperparameters.env.observation_space.shape[0]
-        num_actions = hyperparameters.env.action_space.n
+
+        env = hyperparameters.env
+        if not isinstance(env.action_space, spaces.Discrete):
+            raise ValueError("This agent only supports discrete action spaces")
+        in_features = env.observation_space.shape[0]
+        num_actions = env.action_space.n
         hidden_features = hyperparameters.hidden_features
 
         self.network = nn.Sequential(
