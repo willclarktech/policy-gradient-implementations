@@ -102,7 +102,7 @@ EpisodeRunner = Callable[
     [BaseAgent, Hyperparameters, Optional[bool], Optional[bool]], float
 ]
 
-
+# pylint: disable=too-many-arguments
 def train(
     agent: BaseAgent,
     hyperparameters: Hyperparameters,
@@ -133,3 +133,4 @@ def train(
         agent.save(save_dir)
 
     plot_returns(returns, average_returns)
+    # pylint: enable=too-many-arguments

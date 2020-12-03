@@ -140,6 +140,7 @@ disable=print-statement,
         exception-escape,
         comprehension-escape,
         # Custom rules
+        duplicate-code,
         line-too-long,
         missing-class-docstring,
         missing-function-docstring,
