@@ -5,6 +5,7 @@ from policy_gradients.core import Algorithm, BaseAgent, Hyperparameters, train
 from policy_gradients.utils import set_seed
 
 from policy_gradients.actor_critic import algorithm as actor_critic
+from policy_gradients.baseline import algorithm as baseline
 from policy_gradients.ddpg import algorithm as ddpg
 from policy_gradients.reinforce import algorithm as reinforce
 from policy_gradients.sac import algorithm as sac
@@ -12,6 +13,7 @@ from policy_gradients.td3 import algorithm as td3
 
 algorithms: Dict[str, Algorithm] = {
     "actor_critic": actor_critic,
+    "baseline": baseline,
     "ddpg": ddpg,
     "reinforce": reinforce,
     "sac": sac,
