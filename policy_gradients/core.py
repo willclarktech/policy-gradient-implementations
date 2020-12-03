@@ -104,7 +104,9 @@ class BaseAgent(metaclass=ABCMeta):
 
 
 GenericAgent = TypeVar("GenericAgent", bound=BaseAgent)
-EpisodeRunner = Callable[[GenericAgent, Hyperparameters, bool, bool], float]
+EpisodeRunner = Callable[
+    [GenericAgent, Hyperparameters, Optional[bool], Optional[bool]], float
+]
 
 # pylint: disable=too-many-arguments
 def train(
@@ -112,8 +114,8 @@ def train(
     hyperparameters: Hyperparameters,
     run_episode: EpisodeRunner,
     save_dir: Optional[str] = None,
-    should_render: bool = False,
-    should_eval: bool = False,
+    should_render: Optional[bool] = False,
+    should_eval: Optional[bool] = False,
 ) -> None:
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period
