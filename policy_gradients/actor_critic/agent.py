@@ -55,7 +55,7 @@ class Agent(BaseAgent):
         log_probability = distribution.log_prob(action)
         return action.item(), log_probability
 
-    def update(
+    def learn(
         self,
         observation: np.ndarray,
         log_probability: T.Tensor,

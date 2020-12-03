@@ -26,7 +26,7 @@ def run_episode(
         ret += reward
 
         if not should_eval:
-            agent.update(observation, log_probability, reward, done, observation_)
+            agent.learn(observation, log_probability, reward, done, observation_)
 
         observation = observation_
 

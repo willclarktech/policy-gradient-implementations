@@ -35,6 +35,6 @@ def run_episode(
             env.render()
 
     if not should_eval:
-        agent.update()
+        agent.learn()
 
     return ret

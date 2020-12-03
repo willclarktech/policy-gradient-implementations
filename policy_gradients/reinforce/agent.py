@@ -57,7 +57,7 @@ class Agent(BaseAgent):
         self.rewards.append(reward)
         self.log_probabilities = T.cat([self.log_probabilities, log_probability])
 
-    def update(self) -> None:
+    def learn(self) -> None:
         self.optimizer.zero_grad()
         G = T.tensor(calculate_returns(self.rewards, self.gamma)).to(self.device)
         loss = T.sum(-G * self.log_probabilities)
