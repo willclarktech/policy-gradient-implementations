@@ -7,6 +7,7 @@ from policy_gradients.utils import set_seed
 from policy_gradients.actor_critic import algorithm as actor_critic
 from policy_gradients.baseline import algorithm as baseline
 from policy_gradients.ddpg import algorithm as ddpg
+from policy_gradients.human import algorithm as human
 from policy_gradients.reinforce import algorithm as reinforce
 from policy_gradients.sac import algorithm as sac
 from policy_gradients.td3 import algorithm as td3
@@ -15,6 +16,7 @@ algorithms: Dict[str, Algorithm] = {
     "actor_critic": actor_critic,
     "baseline": baseline,
     "ddpg": ddpg,
+    "human": human,
     "reinforce": reinforce,
     "sac": sac,
     "td3": td3,
@@ -25,15 +27,15 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     if "seed" in options and options["seed"] is not None:
         set_seed(options["seed"])
 
-    load_dir = options.pop("load_dir", None)
-    save_dir = options.pop("save_dir", None)
-    should_render = options.pop("render", False)
-    should_eval = options.pop("eval", False)
-
     algorithm_name = options["algorithm"]
     algorithm = algorithms[algorithm_name]
     if algorithm is None:
         raise ValueError(f"Experiment {algorithm_name} not recognized")
+
+    load_dir = options.pop("load_dir", None)
+    save_dir = options.pop("save_dir", None)
+    should_eval = options.pop("eval", False)
+    should_render = options.pop("render", False)
 
     hyperparameter_args = algorithm.default_hyperparameters()
     for key in options:
