@@ -1,16 +1,16 @@
 from pprint import pprint
 from typing import Any, Dict
 
-from policy_gradients.core import BaseAgent, Hyperparameters, train
+from policy_gradients.core import Algorithm, BaseAgent, Hyperparameters, train
 from policy_gradients.utils import set_seed
 
-import policy_gradients.actor_critic as actor_critic
-import policy_gradients.ddpg as ddpg
-import policy_gradients.reinforce as reinforce
-import policy_gradients.sac as sac
-import policy_gradients.td3 as td3
+from policy_gradients.actor_critic import algorithm as actor_critic
+from policy_gradients.ddpg import algorithm as ddpg
+from policy_gradients.reinforce import algorithm as reinforce
+from policy_gradients.sac import algorithm as sac
+from policy_gradients.td3 import algorithm as td3
 
-algorithms = {
+algorithms: Dict[str, Algorithm] = {
     "actor_critic": actor_critic,
     "ddpg": ddpg,
     "reinforce": reinforce,
@@ -33,13 +33,13 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     if algorithm is None:
         raise ValueError(f"Experiment {algorithm_name} not recognized")
 
-    hyperparameter_args = algorithm.default_hyperparameters()  # type: ignore
+    hyperparameter_args = algorithm.default_hyperparameters()
     for key in options:
         if options[key] is not None:
             hyperparameter_args[key] = options[key]
 
     hyperparameters = Hyperparameters(**hyperparameter_args)
-    agent = algorithm.Agent(hyperparameters)  # type: ignore
+    agent = algorithm.Agent(hyperparameters)
 
     if load_dir is not None:
         print(f"Loading model from {load_dir}...")
@@ -54,7 +54,14 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     pprint(hyperparameter_args)
 
     print("Starting training...")
-    train(agent, hyperparameters, algorithm.run_episode, save_dir=save_dir, should_render=should_render, should_eval=should_eval)  # type: ignore
+    train(
+        agent,
+        hyperparameters,
+        algorithm.run_episode,
+        save_dir=save_dir,
+        should_render=should_render,
+        should_eval=should_eval,
+    )
     print("Finished training")
 
     if save_dir is not None:

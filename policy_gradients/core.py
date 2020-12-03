@@ -1,5 +1,6 @@
+from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
@@ -62,7 +63,7 @@ class Hyperparameters:
         self.save_dir = save_dir
 
 
-class BaseAgent:
+class BaseAgent(metaclass=ABCMeta):
     def __init__(self, hyperparameters: Hyperparameters) -> None:
         self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
         self.algorithm = hyperparameters.algorithm
@@ -85,26 +86,29 @@ class BaseAgent:
     def get_savefile_name(self, dirname: str, component: str) -> str:
         return f"{dirname}/{self.algorithm}_{self.env_name}/{component}.zip"
 
+    @abstractmethod
     def train(self) -> None:
-        raise NotImplementedError("train method not implemented")
+        pass
 
+    @abstractmethod
     def eval(self) -> None:
-        raise NotImplementedError("eval method not implemented")
+        pass
 
+    @abstractmethod
     def load(self, load_dir: str) -> None:
-        raise NotImplementedError("load method not implemented")
+        pass
 
+    @abstractmethod
     def save(self, save_dir: str) -> None:
-        raise NotImplementedError("save method not implemented")
+        pass
 
 
-EpisodeRunner = Callable[
-    [BaseAgent, Hyperparameters, Optional[bool], Optional[bool]], float
-]
+GenericAgent = TypeVar("GenericAgent", bound=BaseAgent)
+EpisodeRunner = Callable[[GenericAgent, Hyperparameters, bool, bool], float]
 
 # pylint: disable=too-many-arguments
 def train(
-    agent: BaseAgent,
+    agent: GenericAgent,
     hyperparameters: Hyperparameters,
     run_episode: EpisodeRunner,
     save_dir: Optional[str] = None,
@@ -133,4 +137,16 @@ def train(
         agent.save(save_dir)
 
     plot_returns(returns, average_returns)
-    # pylint: enable=too-many-arguments
+
+
+class Algorithm:
+    # pylint: disable=invalid-name,too-few-public-methods
+    def __init__(
+        self,
+        Agent: Type[GenericAgent],
+        default_hyperparameters: Callable[[], Dict[str, Any]],
+        run_episode: EpisodeRunner,
+    ):
+        self.Agent = Agent
+        self.default_hyperparameters = default_hyperparameters
+        self.run_episode = run_episode
