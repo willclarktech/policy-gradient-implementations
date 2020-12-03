@@ -75,6 +75,16 @@ class Agent(BaseAgent):
         loss.backward()
         self.optimizer.step()
 
+    def train(self) -> None:
+        self.network.train()
+        self.V.train()
+        self.pi.train()
+
+    def eval(self) -> None:
+        self.network.eval()
+        self.V.eval()
+        self.pi.eval()
+
     def load(self, load_dir: str) -> None:
         self.network.load_state_dict(
             T.load(

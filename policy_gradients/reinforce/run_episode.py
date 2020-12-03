@@ -3,7 +3,10 @@ from policy_gradients.reinforce.agent import Agent
 
 
 def run_episode(
-    agent: Agent, hyperparameters: Hyperparameters, should_render: bool = False
+    agent: Agent,
+    hyperparameters: Hyperparameters,
+    should_render: bool = False,
+    should_eval: bool = False,
 ) -> float:
     env = hyperparameters.env
     # Necessary for pybullet envs
@@ -22,11 +25,16 @@ def run_episode(
         action, log_probability = agent.choose_action(observation)
         observation_, reward, done, _ = env.step(action)
         ret += reward
-        agent.remember(log_probability, reward)
+
+        if not should_eval:
+            agent.remember(log_probability, reward)
+
         observation = observation_
 
         if should_render:
             env.render()
 
-    agent.update()
+    if not should_eval:
+        agent.update()
+
     return ret

@@ -64,6 +64,12 @@ class Agent(BaseAgent):
         loss.backward()
         self.optimizer.step()
 
+    def train(self) -> None:
+        self.policy.train()
+
+    def eval(self) -> None:
+        self.policy.eval()
+
     def load(self, load_dir: str) -> None:
         self.policy.load_state_dict(
             T.load(self.get_savefile_name(load_dir, "policy"), map_location=self.device)

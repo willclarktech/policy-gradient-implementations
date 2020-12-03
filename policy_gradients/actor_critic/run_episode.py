@@ -3,7 +3,10 @@ from policy_gradients.actor_critic.agent import Agent
 
 
 def run_episode(
-    agent: Agent, hyperparameters: Hyperparameters, should_render: bool = False
+    agent: Agent,
+    hyperparameters: Hyperparameters,
+    should_render: bool = False,
+    should_eval: bool = False,
 ) -> float:
     env = hyperparameters.env
     # Necessary for pybullet envs
@@ -21,7 +24,10 @@ def run_episode(
         action, log_probability = agent.choose_action(observation)
         observation_, reward, done, _ = env.step(action)
         ret += reward
-        agent.update(observation, log_probability, reward, done, observation_)
+
+        if not should_eval:
+            agent.update(observation, log_probability, reward, done, observation_)
+
         observation = observation_
 
         if should_render:

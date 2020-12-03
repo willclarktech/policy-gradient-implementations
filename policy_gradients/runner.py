@@ -26,6 +26,7 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     load_dir = options.pop("load_dir", None)
     save_dir = options.pop("save_dir", None)
     should_render = options.pop("render", False)
+    should_eval = options.pop("eval", False)
 
     algorithm_name = options["algorithm"]
     algorithm = algorithms[algorithm_name]
@@ -45,12 +46,15 @@ def run(options: Dict[str, Any]) -> BaseAgent:
         agent.load(load_dir)
         print("Successfully loaded model")
 
+    if should_eval:
+        agent.eval()
+
     print(f"Algorithm: {algorithm_name}")
     print("Hyperparameters:")
     pprint(hyperparameter_args)
 
     print("Starting training...")
-    train(agent, hyperparameters, algorithm.run_episode, save_dir=save_dir, should_render=should_render)  # type: ignore
+    train(agent, hyperparameters, algorithm.run_episode, save_dir=save_dir, should_render=should_render, should_eval=should_eval)  # type: ignore
     print("Finished training")
 
     if save_dir is not None:

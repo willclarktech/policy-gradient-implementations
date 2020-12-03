@@ -153,6 +153,18 @@ class Agent(BaseAgent):
         self.update_actor(observation)
         self.update_value_target(tau=self.tau)
 
+    def train(self) -> None:
+        self.actor.train()
+        self.critic_1.train()
+        self.critic_2.train()
+        self.value.train()
+
+    def eval(self) -> None:
+        self.actor.eval()
+        self.critic_1.eval()
+        self.critic_2.eval()
+        self.value.eval()
+
     def load(self, load_dir: str) -> None:
         actor_state_dict = T.load(
             self.get_savefile_name(load_dir, "actor"), map_location=self.device

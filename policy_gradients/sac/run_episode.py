@@ -3,7 +3,10 @@ from policy_gradients.sac.agent import Agent
 
 
 def run_episode(
-    agent: Agent, hyperparameters: Hyperparameters, should_render: bool = False
+    agent: Agent,
+    hyperparameters: Hyperparameters,
+    should_render: bool = False,
+    should_eval: bool = False,
 ) -> float:
     env = hyperparameters.env
     # Necessary for pybullet envs
@@ -21,9 +24,12 @@ def run_episode(
         action = agent.choose_action(observation)
         observation_, reward, done, _ = env.step(action)
         ret += reward
-        agent.remember(observation, action, reward, observation_, done)
+
+        if not should_eval:
+            agent.remember(observation, action, reward, observation_, done)
+            agent.learn()
+
         observation = observation_
-        agent.learn()
 
         if should_render:
             env.render()

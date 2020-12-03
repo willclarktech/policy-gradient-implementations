@@ -133,6 +133,16 @@ class Agent(BaseAgent):
 
             self.update_target_networks(self.tau)
 
+    def train(self) -> None:
+        self.actor.train()
+        self.critic_1.train()
+        self.critic_2.train()
+
+    def eval(self) -> None:
+        self.actor.eval()
+        self.critic_1.eval()
+        self.critic_2.eval()
+
     def load(self, load_dir: str) -> None:
         actor_state_dict = T.load(
             self.get_savefile_name(load_dir, "actor"), map_location=self.device

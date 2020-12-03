@@ -73,5 +73,11 @@ def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:
         action="store_true",
         help="whether to show stacktrace on error",
     )
+    parser.add_argument(
+        "--eval",
+        default=False,
+        action="store_true",
+        help="whether to run the agent in evaluation mode (no training)",
+    )
 
     return parser

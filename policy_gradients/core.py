@@ -85,6 +85,12 @@ class BaseAgent:
     def get_savefile_name(self, dirname: str, component: str) -> str:
         return f"{dirname}/{self.algorithm}_{self.env_name}/{component}.zip"
 
+    def train(self) -> None:
+        raise NotImplementedError("train method not implemented")
+
+    def eval(self) -> None:
+        raise NotImplementedError("eval method not implemented")
+
     def load(self, load_dir: str) -> None:
         raise NotImplementedError("load method not implemented")
 
@@ -92,7 +98,9 @@ class BaseAgent:
         raise NotImplementedError("save method not implemented")
 
 
-EpisodeRunner = Callable[[BaseAgent, Hyperparameters, Optional[bool]], float]
+EpisodeRunner = Callable[
+    [BaseAgent, Hyperparameters, Optional[bool], Optional[bool]], float
+]
 
 
 def train(
@@ -101,6 +109,7 @@ def train(
     run_episode: EpisodeRunner,
     save_dir: Optional[str] = None,
     should_render: bool = False,
+    should_eval: bool = False,
 ) -> None:
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period
@@ -109,7 +118,7 @@ def train(
     average_returns = []
 
     for i in range(1, n_episodes + 1):
-        ret = run_episode(agent, hyperparameters, should_render)
+        ret = run_episode(agent, hyperparameters, should_render, should_eval)
 
         returns.append(ret)
         average_return = np.mean(returns[-100:])
