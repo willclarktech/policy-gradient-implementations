@@ -1,0 +1,1 @@
+{"seed": null, "algorithm": "actor_critic", "env_name": "LunarLander-v2", "n_episodes": 1, "log_period": 1, "hidden_features": [2048, 1536], "alpha": 5e-06, "beta": 1.0, "gamma": 0.99, "tau": 1.0, "d": 1, "batch_size": 1, "replay_buffer_capacity": 0, "reward_scale": 1.0, "epsilon": 0.0, "noise": 0.0, "noise_clip": 0.0, "l2_weight_decay": 0.0, "save_dir": null}

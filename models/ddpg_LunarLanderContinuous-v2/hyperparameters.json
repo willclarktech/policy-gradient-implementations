@@ -1,0 +1,1 @@
+{"seed": null, "algorithm": "ddpg", "env_name": "LunarLanderContinuous-v2", "n_episodes": 1, "log_period": 1, "hidden_features": [400, 300], "alpha": 0.0001, "beta": 0.001, "gamma": 0.99, "tau": 0.001, "d": 1, "batch_size": 64, "replay_buffer_capacity": 1000000, "reward_scale": 1.0, "epsilon": 0.0, "noise": 0.0, "noise_clip": 0.0, "l2_weight_decay": 0.01, "save_dir": null}
