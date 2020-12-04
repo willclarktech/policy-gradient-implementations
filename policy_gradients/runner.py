@@ -41,7 +41,7 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     default_hyperparameter_args = algorithm.default_hyperparameters()
     env_name = options.get("env_name") or default_hyperparameter_args.get("env_name")
     if env_name is None:
-        raise ValueError(f"No environment specified")
+        raise ValueError("No environment specified")
 
     loaded_hyperparameter_args = (
         json.loads(
