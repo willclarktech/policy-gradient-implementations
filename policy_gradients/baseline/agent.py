@@ -3,7 +3,10 @@ from policy_gradients.core import BaseAgent, Hyperparameters
 
 class Agent(BaseAgent):
     # pylint: disable=invalid-name,not-callable
-    def __init__(self, hyperparameters: Hyperparameters,) -> None:
+    def __init__(
+        self,
+        hyperparameters: Hyperparameters,
+    ) -> None:
         super().__init__(hyperparameters)
         self.action_space = hyperparameters.env.action_space
 

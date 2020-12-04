@@ -22,7 +22,10 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
 
 class Agent(BaseAgent):
     # pylint: disable=invalid-name,not-callable
-    def __init__(self, hyperparameters: Hyperparameters,) -> None:
+    def __init__(
+        self,
+        hyperparameters: Hyperparameters,
+    ) -> None:
         super().__init__(hyperparameters)
         self.gamma = hyperparameters.gamma
 

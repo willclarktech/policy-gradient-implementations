@@ -21,7 +21,10 @@ def calculate_returns(rewards: List[float], gamma: float) -> List[float]:
 
 class Agent(BaseAgent):
     # pylint: disable=invalid-name,too-many-arguments
-    def __init__(self, hyperparameters: Hyperparameters,) -> None:
+    def __init__(
+        self,
+        hyperparameters: Hyperparameters,
+    ) -> None:
         super().__init__(hyperparameters)
         self.gamma = hyperparameters.gamma
 
@@ -37,7 +40,8 @@ class Agent(BaseAgent):
         )
         self.V = nn.Linear(hidden_features[-1], 1).to(self.device)
         self.pi = nn.Sequential(
-            nn.Linear(hidden_features[-1], num_actions), nn.Softmax(dim=-1),
+            nn.Linear(hidden_features[-1], num_actions),
+            nn.Softmax(dim=-1),
         ).to(self.device)
         self.optimizer = optim.Adam(
             [*self.network.parameters(), *self.V.parameters()], lr=hyperparameters.alpha

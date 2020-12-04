@@ -25,10 +25,17 @@ class Actor(nn.Module):
         # NOTE: The DDPG paper uses BatchNorm but PyTorch seems to have some problems
         self.network = nn.Sequential(
             *[
-                nn.Sequential(fc, nn.LayerNorm(hidden_features[i]), nn.ReLU(),)
+                nn.Sequential(
+                    fc,
+                    nn.LayerNorm(hidden_features[i]),
+                    nn.ReLU(),
+                )
                 for i, fc in enumerate(self.fcs[:-1])
             ],
-            nn.Sequential(self.fcs[-1], nn.Tanh(),)
+            nn.Sequential(
+                self.fcs[-1],
+                nn.Tanh(),
+            ),
         )
 
         self.initialize_weights()

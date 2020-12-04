@@ -11,7 +11,10 @@ def get_action_from_key(key: int) -> int:
 
 class Agent(BaseAgent):
     # pylint: disable=invalid-name,not-callable
-    def __init__(self, hyperparameters: Hyperparameters,) -> None:
+    def __init__(
+        self,
+        hyperparameters: Hyperparameters,
+    ) -> None:
         super().__init__(hyperparameters)
 
         env = hyperparameters.env

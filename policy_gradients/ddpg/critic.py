@@ -27,10 +27,14 @@ class Critic(nn.Module):
         # NOTE: The DDPG paper uses BatchNorm but PyTorch seems to have some problems
         self.observation_value = nn.Sequential(
             *[
-                nn.Sequential(fc, nn.LayerNorm(hidden_features[i]), nn.ReLU(),)
+                nn.Sequential(
+                    fc,
+                    nn.LayerNorm(hidden_features[i]),
+                    nn.ReLU(),
+                )
                 for i, fc in enumerate(self.fcs[:-2])
             ],
-            nn.Sequential(self.fcs[-2], nn.LayerNorm(hidden_features[-1]))
+            nn.Sequential(self.fcs[-2], nn.LayerNorm(hidden_features[-1])),
         )
         self.action_value = nn.Linear(action_dims, hidden_features[-1])
         self.q = nn.Sequential(nn.ReLU(), self.fcs[-1])
