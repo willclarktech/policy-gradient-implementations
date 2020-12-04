@@ -1,1 +1,23 @@
-{"seed": null, "algorithm": "td3", "env_name": "LunarLanderContinuous-v2", "n_episodes": 1, "log_period": 1, "hidden_features": [256, 256], "alpha": 0.001, "beta": 1.0, "gamma": 0.99, "tau": 0.005, "d": 2, "batch_size": 100, "replay_buffer_capacity": 1000000, "reward_scale": 1.0, "epsilon": 0.0, "noise": 0.2, "noise_clip": 0.5, "l2_weight_decay": 0.0, "save_dir": null}
+{
+    "algorithm": "td3",
+    "alpha": 0.001,
+    "batch_size": 100,
+    "beta": 1.0,
+    "d": 2,
+    "env_name": "LunarLanderContinuous-v2",
+    "epsilon": 0.0,
+    "gamma": 0.99,
+    "hidden_features": [
+        256,
+        256
+    ],
+    "l2_weight_decay": 0.0,
+    "log_period": 1,
+    "n_episodes": 1,
+    "noise": 0.2,
+    "noise_clip": 0.5,
+    "replay_buffer_capacity": 1000000,
+    "reward_scale": 1.0,
+    "seed": null,
+    "tau": 0.005
+}
