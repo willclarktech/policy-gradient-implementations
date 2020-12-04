@@ -51,7 +51,7 @@ To see the full list of options, including available algorithms:
 Several pre-trained models are provided in `./models`. For example, to view a pre-trained SAC agent operate in the `InvertedPendulumBulletEnv-v0` environment you can run:
 
 ```sh
-./bin/policy_gradients sac -n 1 --render --load_dir ./models
+./bin/policy_gradients sac -n 1 --env InvertedPendulumBulletEnv-v0 --eval --render --load_dir ./models
 ```
 
 ### Programmatic API
