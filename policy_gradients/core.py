@@ -34,7 +34,6 @@ class Hyperparameters:
         noise: float = 0.0,
         noise_clip: float = 0.0,
         l2_weight_decay: float = 0.0,
-        save_dir: Optional[str] = None,
     ) -> None:
         self.seed = seed
         self.algorithm = algorithm
@@ -62,12 +61,10 @@ class Hyperparameters:
 
         self.l2_weight_decay = l2_weight_decay
 
-        self.save_dir = save_dir
-
     def to_json(self) -> str:
         json_vars = dict(vars(self))
         json_vars.pop("env")
-        return json.dumps(json_vars)
+        return json.dumps(json_vars, indent=4, sort_keys=True)
 
 
 class BaseAgent(metaclass=ABCMeta):
