@@ -99,6 +99,7 @@ class Agent(BaseAgent):
         )
 
     def save(self, save_dir: str) -> None:
+        super().save(save_dir)
         T.save(self.network.state_dict(), self.get_savefile_name(save_dir, "network"))
         T.save(self.V.state_dict(), self.get_savefile_name(save_dir, "V"))
         T.save(self.pi.state_dict(), self.get_savefile_name(save_dir, "pi"))

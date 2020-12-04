@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
+import json
+import os
 from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import gym  # type: ignore
@@ -62,9 +64,15 @@ class Hyperparameters:
 
         self.save_dir = save_dir
 
+    def to_json(self) -> str:
+        json_vars = dict(vars(self))
+        json_vars.pop("env")
+        return json.dumps(json_vars)
+
 
 class BaseAgent(metaclass=ABCMeta):
     def __init__(self, hyperparameters: Hyperparameters) -> None:
+        self.hyperparameters = hyperparameters
         self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
         self.algorithm = hyperparameters.algorithm
         self.env_name = hyperparameters.env_name
@@ -83,8 +91,11 @@ class BaseAgent(metaclass=ABCMeta):
         return tensor.to(self.device)
         # pylint: enable=not-callable
 
+    def get_savedir_name(self, dirname: str) -> str:
+        return f"{dirname}/{self.algorithm}_{self.env_name}"
+
     def get_savefile_name(self, dirname: str, component: str) -> str:
-        return f"{dirname}/{self.algorithm}_{self.env_name}/{component}.zip"
+        return f"{self.get_savedir_name(dirname)}/{component}.zip"
 
     @abstractmethod
     def train(self) -> None:
@@ -98,9 +109,13 @@ class BaseAgent(metaclass=ABCMeta):
     def load(self, load_dir: str) -> None:
         pass
 
-    @abstractmethod
     def save(self, save_dir: str) -> None:
-        pass
+        model_save_dir = self.get_savedir_name(save_dir)
+        os.makedirs(model_save_dir, exist_ok=True)
+        with open(
+            f"{model_save_dir}/hyperparameters.json", "w"
+        ) as hyperparameters_json:
+            hyperparameters_json.write(self.hyperparameters.to_json())
 
 
 GenericAgent = TypeVar("GenericAgent", bound=BaseAgent)
@@ -108,12 +123,11 @@ EpisodeRunner = Callable[
     [GenericAgent, Hyperparameters, Optional[bool], Optional[bool]], float
 ]
 
-# pylint: disable=too-many-arguments
+
 def train(
     agent: GenericAgent,
     hyperparameters: Hyperparameters,
     run_episode: EpisodeRunner,
-    save_dir: Optional[str] = None,
     should_render: Optional[bool] = False,
     should_eval: Optional[bool] = False,
 ) -> None:
@@ -134,9 +148,6 @@ def train(
             print(
                 f"[{datetime.now().isoformat(timespec='seconds')}] Episode {i}; Return {ret}; Average return {average_return}"
             )
-
-    if save_dir is not None:
-        agent.save(save_dir)
 
     plot_returns(returns, average_returns)
 

@@ -76,4 +76,5 @@ class Agent(BaseAgent):
         )
 
     def save(self, save_dir: str) -> None:
+        super().save(save_dir)
         T.save(self.policy.state_dict(), self.get_savefile_name(save_dir, "policy"))

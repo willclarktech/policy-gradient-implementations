@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 def default_hyperparameters() -> Dict[str, Any]:
     return dict(
+        algorithm="sac",
         env_name="InvertedPendulumBulletEnv-v0",
         n_episodes=250,
         log_period=1,

@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 def default_hyperparameters() -> Dict[str, Any]:
     return dict(
+        algorithm="reinforce",
         env_name="LunarLander-v2",
         n_episodes=3000,
         log_period=1,

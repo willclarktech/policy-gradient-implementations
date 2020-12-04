@@ -1,3 +1,4 @@
+import json
 from pprint import pprint
 from typing import Any, Dict
 
@@ -37,10 +38,39 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     should_eval = options.pop("eval", False)
     should_render = options.pop("render", False)
 
-    hyperparameter_args = algorithm.default_hyperparameters()
-    for key in options:
-        if options[key] is not None:
-            hyperparameter_args[key] = options[key]
+    default_hyperparameter_args = algorithm.default_hyperparameters()
+    env_name = options.get("env_name") or default_hyperparameter_args["env_name"]
+    loaded_hyperparameter_args = (
+        json.loads(
+            open(
+                f"{load_dir}/{algorithm_name}_{env_name}/hyperparameters.json", "r"
+            ).read()
+        )
+        if load_dir is not None
+        else {}
+    )
+    filtered_loaded_hyperparameter_args = {
+        k: v
+        for k, v in loaded_hyperparameter_args.items()
+        if k in default_hyperparameter_args and v is not None
+    }
+    filtered_options = {
+        k: v
+        for k, v in options.items()
+        if k in default_hyperparameter_args and v is not None
+    }
+    hyperparameter_args = {
+        **default_hyperparameter_args,
+        **filtered_loaded_hyperparameter_args,
+        **filtered_options,
+    }
+
+    # for key in hyperparameter_args:
+    #     if loaded_hyperparameter_args[key] is not None:
+    #         hyperparameter_args[key] = loaded_hyperparameter_args[key]
+    # for key in options:
+    #     if options[key] is not None:
+    #         hyperparameter_args[key] = options[key]
 
     hyperparameters = Hyperparameters(**hyperparameter_args)
     agent = algorithm.Agent(hyperparameters)
@@ -62,7 +92,6 @@ def run(options: Dict[str, Any]) -> BaseAgent:
         agent,
         hyperparameters,
         algorithm.run_episode,
-        save_dir=save_dir,
         should_render=should_render,
         should_eval=should_eval,
     )

@@ -162,6 +162,7 @@ class Agent(BaseAgent):
         self.critic_2_target.load_state_dict(critic_2_state_dict)
 
     def save(self, save_dir: str) -> None:
+        super().save(save_dir)
         T.save(self.actor.state_dict(), self.get_savefile_name(save_dir, "actor"))
         T.save(self.critic_1.state_dict(), self.get_savefile_name(save_dir, "critic_1"))
         T.save(self.critic_2.state_dict(), self.get_savefile_name(save_dir, "critic_2"))
