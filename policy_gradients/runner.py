@@ -25,13 +25,13 @@ algorithms: Dict[str, Algorithm] = {
 
 
 def run(options: Dict[str, Any]) -> BaseAgent:
-    if "seed" in options and options["seed"] is not None:
-        set_seed(options["seed"])
+    if options.get("seed") is not None:
+        set_seed(options.get("seed"))
 
-    algorithm_name = options["algorithm"]
+    algorithm_name = options.get("algorithm") or ""
     algorithm = algorithms[algorithm_name]
     if algorithm is None:
-        raise ValueError(f"Experiment {algorithm_name} not recognized")
+        raise ValueError(f"Experiment {algorithm_name or '(none)'} not recognized")
 
     load_dir = options.pop("load_dir", None)
     save_dir = options.pop("save_dir", None)
@@ -39,7 +39,10 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     should_render = options.pop("render", False)
 
     default_hyperparameter_args = algorithm.default_hyperparameters()
-    env_name = options.get("env_name") or default_hyperparameter_args["env_name"]
+    env_name = options.get("env_name") or default_hyperparameter_args.get("env_name")
+    if env_name is None:
+        raise ValueError(f"No environment specified")
+
     loaded_hyperparameter_args = (
         json.loads(
             open(
@@ -64,13 +67,6 @@ def run(options: Dict[str, Any]) -> BaseAgent:
         **filtered_loaded_hyperparameter_args,
         **filtered_options,
     }
-
-    # for key in hyperparameter_args:
-    #     if loaded_hyperparameter_args[key] is not None:
-    #         hyperparameter_args[key] = loaded_hyperparameter_args[key]
-    # for key in options:
-    #     if options[key] is not None:
-    #         hyperparameter_args[key] = options[key]
 
     hyperparameters = Hyperparameters(**hyperparameter_args)
     agent = algorithm.Agent(hyperparameters)

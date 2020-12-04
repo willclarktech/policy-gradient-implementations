@@ -44,15 +44,16 @@ def plot_returns(
     plt.show()
 
 
-def set_seed(seed: int) -> None:
-    T.set_deterministic(True)
-    T.backends.cudnn.deterministic = True
-    T.backends.cudnn.benchmark = False
-    T.manual_seed(seed)
-    T.cuda.manual_seed_all(seed)
-    np.random.seed(seed)
-    random.seed(seed)
-    os.environ["PYTHONHASHSEED"] = str(seed)
+def set_seed(seed: Optional[int]) -> None:
+    if seed is not None:
+        T.set_deterministic(True)
+        T.backends.cudnn.deterministic = True
+        T.backends.cudnn.benchmark = False
+        T.manual_seed(seed)
+        T.cuda.manual_seed_all(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+        os.environ["PYTHONHASHSEED"] = str(seed)
 
 
 def update_target_network(
