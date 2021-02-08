@@ -63,7 +63,7 @@ class Agent(BaseAgent):
         actions: T.Tensor,
         old_log_probabilities: T.Tensor,
         advantages: T.Tensor,
-    ) -> T.Tensor:
+    ) -> Tuple[T.Tensor, T.Tensor]:
         distribution = self.actor(observations)
         new_log_probabilities = distribution.log_prob(actions)
         ratio = new_log_probabilities.exp() / old_log_probabilities.exp()
@@ -71,7 +71,9 @@ class Agent(BaseAgent):
         clipped_weighted_ratio = advantages * T.clamp(
             ratio, 1.0 - self.epsilon, 1.0 + self.epsilon
         )
-        return -T.min(weighted_ratio, clipped_weighted_ratio).mean()
+        actor_loss = -T.min(weighted_ratio, clipped_weighted_ratio).mean()
+        entropy_loss = -distribution.entropy().mean()
+        return actor_loss, entropy_loss
 
     def calculate_critic_loss(
         self, observations: T.Tensor, values: T.Tensor, advantages: T.Tensor
@@ -88,11 +90,11 @@ class Agent(BaseAgent):
         advantages: T.Tensor,
         values: T.Tensor,
     ) -> None:
-        actor_loss = self.calculate_actor_loss(
+        actor_loss, entropy_loss = self.calculate_actor_loss(
             observations, actions, old_log_probabilities, advantages
         )
         critic_loss = self.calculate_critic_loss(observations, values, advantages)
-        total_loss = actor_loss + 0.5 * critic_loss
+        total_loss = actor_loss + 0.5 * critic_loss + 0.01 * entropy_loss
         self.actor.optimizer.zero_grad()
         self.critic.optimizer.zero_grad()
         total_loss.backward()
