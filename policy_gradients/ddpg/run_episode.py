@@ -1,5 +1,3 @@
-from typing import Optional
-
 from policy_gradients.core import Hyperparameters
 from policy_gradients.ddpg.agent import Agent
 
@@ -7,8 +5,8 @@ from policy_gradients.ddpg.agent import Agent
 def run_episode(
     agent: Agent,
     hyperparameters: Hyperparameters,
-    should_render: Optional[bool] = False,
-    should_eval: Optional[bool] = False,
+    should_render: bool = False,
+    should_eval: bool = False,
 ) -> float:
     env = hyperparameters.env
     # Necessary for pybullet envs
