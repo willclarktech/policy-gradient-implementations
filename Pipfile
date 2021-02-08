@@ -8,7 +8,7 @@ gym = "*"
 "gym[box2d]" = "*"
 matplotlib = "*"
 pybullet = "*"
-torch = "*"
+torch = ">=1.7.1"
 
 [dev-packages]
 mypy = "*"
