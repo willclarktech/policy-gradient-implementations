@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 import gym  # type: ignore
 import numpy as np  # type: ignore
 import pybullet_envs  # type: ignore # pylint: disable=unused-import
-import torch as T
+import torch
 
 from policy_gradients.utils import plot_returns
 
@@ -25,8 +25,12 @@ class Hyperparameters:
         alpha: float = 1.0,
         beta: float = 1.0,
         gamma: float = 1.0,
+        lam: float = 1.0,
         tau: float = 1.0,
         d: int = 1,
+        K: int = 1,
+        N: int = 1,
+        T: int = 1,
         batch_size: int = 1,
         replay_buffer_capacity: int = 0,
         reward_scale: float = 1.0,
@@ -48,8 +52,12 @@ class Hyperparameters:
         self.alpha = alpha
         self.beta = beta
         self.gamma = gamma
+        self.lam = lam
         self.tau = tau
         self.d = d
+        self.K = K
+        self.N = N
+        self.T = T
 
         self.batch_size = batch_size
         self.replay_buffer_capacity = replay_buffer_capacity
@@ -70,20 +78,20 @@ class Hyperparameters:
 class BaseAgent(metaclass=ABCMeta):
     def __init__(self, hyperparameters: Hyperparameters) -> None:
         self.hyperparameters = hyperparameters
-        self.device = T.device("cuda" if T.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.algorithm = hyperparameters.algorithm
         self.env_name = hyperparameters.env_name
 
     def process(
         self,
-        observation: Union[List[List[float]], np.ndarray, T.Tensor],
-        dtype: T.dtype = T.float32,
-    ) -> T.Tensor:
+        observation: Union[List[float], List[List[float]], np.ndarray, torch.Tensor],
+        dtype: torch.dtype = torch.float32,
+    ) -> torch.Tensor:
         # pylint: disable=not-callable
         tensor = (
             observation.clone().detach()
-            if isinstance(observation, T.Tensor)
-            else T.tensor(observation, dtype=dtype)
+            if isinstance(observation, torch.Tensor)
+            else torch.tensor(observation, dtype=dtype)
         )
         return tensor.to(self.device)
         # pylint: enable=not-callable
