@@ -21,6 +21,8 @@ class Agent(BaseAgent):
         self.K = hyperparameters.K
         self.lam = hyperparameters.lam
         self.batch_size = hyperparameters.batch_size
+        self.c1 = hyperparameters.c1
+        self.c2 = hyperparameters.c2
 
         env = hyperparameters.env
         if not isinstance(env.action_space, spaces.Box):
@@ -94,7 +96,7 @@ class Agent(BaseAgent):
             observations, actions, old_log_probabilities, advantages
         )
         critic_loss = self.calculate_critic_loss(observations, values, advantages)
-        total_loss = actor_loss + 0.5 * critic_loss + 0.01 * entropy_loss
+        total_loss = actor_loss + self.c1 * critic_loss + self.c2 * entropy_loss
         self.actor.optimizer.zero_grad()
         self.critic.optimizer.zero_grad()
         total_loss.backward()

@@ -16,4 +16,6 @@ def default_hyperparameters() -> Dict[str, Any]:
         K=4,
         batch_size=5,
         N=1,
+        c1=0.5,
+        c2=0.01,
     )

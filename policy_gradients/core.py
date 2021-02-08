@@ -31,6 +31,8 @@ class Hyperparameters:
         K: int = 1,
         N: int = 1,
         T: int = 1,
+        c1: float = 1.0,
+        c2: float = 1.0,
         batch_size: int = 1,
         replay_buffer_capacity: int = 0,
         reward_scale: float = 1.0,
@@ -58,6 +60,8 @@ class Hyperparameters:
         self.K = K
         self.N = N
         self.T = T
+        self.c1 = c1
+        self.c2 = c2
 
         self.batch_size = batch_size
         self.replay_buffer_capacity = replay_buffer_capacity
