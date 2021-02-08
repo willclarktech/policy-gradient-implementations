@@ -11,8 +11,8 @@ def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:
 
     parser.add_argument("--seed", type=int, help="seed to use for reproducible results")
     parser.add_argument(
-        "--env",
         "--env_name",
+        "--env",
         help="choose an environment name from OpenAI’s gym or pybullet; defaults to a sensible choice",
     )
     parser.add_argument(
