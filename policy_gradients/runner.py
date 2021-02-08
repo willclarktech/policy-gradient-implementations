@@ -9,6 +9,7 @@ from policy_gradients.actor_critic import algorithm as actor_critic
 from policy_gradients.baseline import algorithm as baseline
 from policy_gradients.ddpg import algorithm as ddpg
 from policy_gradients.human import algorithm as human
+from policy_gradients.ppo import algorithm as ppo
 from policy_gradients.reinforce import algorithm as reinforce
 from policy_gradients.sac import algorithm as sac
 from policy_gradients.td3 import algorithm as td3
@@ -18,6 +19,7 @@ algorithms: Dict[str, Algorithm] = {
     "baseline": baseline,
     "ddpg": ddpg,
     "human": human,
+    "ppo": ppo,
     "reinforce": reinforce,
     "sac": sac,
     "td3": td3,
