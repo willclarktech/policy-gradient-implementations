@@ -45,9 +45,13 @@ class ReplayBuffer:
 
         self.index += 1
 
-    def sample(self, batch_size: int = 1) -> Sample:
+    def sample(self, batch_size: int = 1, deterministic: bool = False) -> Sample:
         n_samples = min(batch_size, self.size)
-        indices = self.rng.integers(0, self.size, n_samples)
+        indices = (
+            range(batch_size)
+            if deterministic
+            else self.rng.integers(0, self.size, n_samples)
+        )
         return (
             self.observations[indices],
             self.actions[indices],
