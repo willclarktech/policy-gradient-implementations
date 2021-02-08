@@ -44,6 +44,16 @@ def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:
         "--batch_size", type=int, help="batch size to use during training"
     )
     parser.add_argument(
+        "-K",
+        type=int,
+        help="number of training epochs per iteration (eg PPO)",
+    )
+    parser.add_argument(
+        "-T",
+        type=int,
+        help="number of timesteps between training epochs (eg PPO)",
+    )
+    parser.add_argument(
         "--replay_buffer_capacity", type=int, help="replay buffer capacity"
     )
     parser.add_argument("--reward_scale", type=float, help="reward scaling factor")
@@ -57,6 +67,19 @@ def create_parser(algorithms: Iterable[str]) -> argparse.ArgumentParser:
         "--noise_clip",
         type=float,
         help="noise clip to use during action selection (eg for deterministic algorithms like TD3)",
+    )
+    parser.add_argument(
+        "-N",
+        type=int,
+        help="number of agents for parallel data collection (eg PPO)",
+    )
+    parser.add_argument(
+        "--c1",
+        type=float,
+        help="coefficient 1 (eg PPO value function loss coefficient)",
+    )
+    parser.add_argument(
+        "--c2", type=float, help="coefficient 2 (eg PPO entropy loss coefficient)"
     )
     parser.add_argument("--save_dir", help="directory for saving model files")
     parser.add_argument(
