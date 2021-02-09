@@ -110,6 +110,7 @@ class Agent(BaseAgent):
                 actions,
                 old_log_probabilities,
                 values,
+                next_values,
                 rewards,
                 dones,
                 batch_indices,
@@ -122,7 +123,7 @@ class Agent(BaseAgent):
                 for i in range(t, len(rewards) - 1):
                     advantage += discount * (
                         rewards[i]
-                        + self.gamma * values[i + 1] * (1 - int(dones[i].item()))
+                        + self.gamma * next_values[i] * (1 - int(dones[i].item()))
                         - values[i]
                     )
                     discount *= self.gamma * self.lam

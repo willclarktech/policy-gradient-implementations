@@ -11,6 +11,7 @@ class PPOMemory:
         self.actions: List[T.Tensor] = []
         self.log_probabilities: List[T.Tensor] = []
         self.values: List[float] = []
+        self.next_values: List[float] = []
         self.rewards: List[float] = []
         self.dones: List[bool] = []
 
@@ -30,15 +31,24 @@ class PPOMemory:
         self.values.append(value)
         self.rewards.append(reward)
         self.dones.append(done)
+        if len(self.values) != 1:
+            self.next_values.append(value)
 
     def sample(
         self,
     ) -> Tuple[
-        T.Tensor, T.Tensor, T.Tensor, T.Tensor, T.Tensor, T.Tensor, List[np.ndarray]
+        T.Tensor,
+        T.Tensor,
+        T.Tensor,
+        T.Tensor,
+        T.Tensor,
+        T.Tensor,
+        T.Tensor,
+        List[np.ndarray],
     ]:
-        n_observations = len(self.observations)
-        batch_start_indices = np.arange(0, n_observations, self.batch_size)
-        indices = np.arange(n_observations, dtype=np.int64)
+        n_next_values = len(self.next_values)
+        batch_start_indices = np.arange(0, n_next_values, self.batch_size)
+        indices = np.arange(n_next_values, dtype=np.int64)
         np.random.shuffle(indices)
         batch_indices = [indices[i : i + self.batch_size] for i in batch_start_indices]
         # pylint: disable=not-callable
@@ -47,6 +57,7 @@ class PPOMemory:
             T.tensor(self.actions, dtype=T.float32),
             T.tensor(self.log_probabilities, dtype=T.float32),
             T.tensor(self.values, dtype=T.float32),
+            T.tensor(self.next_values, dtype=T.float32),
             T.tensor(self.rewards, dtype=T.float32),
             T.tensor(self.dones, dtype=T.int64),
             batch_indices,
