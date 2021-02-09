@@ -12,7 +12,7 @@ def default_hyperparameters() -> Dict[str, Any]:
         epsilon=0.2,
         gamma=0.99,
         lam=0.95,
-        T=8,
+        T=10,
         K=4,
         batch_size=5,
         N=1,
