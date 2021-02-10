@@ -1,0 +1,22 @@
+{
+    "algorithm": "actor_critic",
+    "alpha": 0.001,
+    "batch_size": 1,
+    "beta": 1.0,
+    "d": 1,
+    "env_name": "CartPole-v1",
+    "epsilon": 0.0,
+    "gamma": 0.99,
+    "hidden_features": [
+        8
+    ],
+    "l2_weight_decay": 0.0,
+    "log_period": 10,
+    "n_episodes": 3000,
+    "noise": 0.0,
+    "noise_clip": 0.0,
+    "replay_buffer_capacity": 0,
+    "reward_scale": 1.0,
+    "seed": null,
+    "tau": 1.0
+}
