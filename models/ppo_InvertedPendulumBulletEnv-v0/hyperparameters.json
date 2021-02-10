@@ -1,0 +1,29 @@
+{
+    "K": 4,
+    "N": 6,
+    "T": 10,
+    "algorithm": "ppo",
+    "alpha": 0.0003,
+    "batch_size": 5,
+    "beta": 1.0,
+    "c1": 0.5,
+    "c2": 0.01,
+    "d": 1,
+    "env_name": "InvertedPendulumBulletEnv-v0",
+    "epsilon": 0.2,
+    "gamma": 0.99,
+    "hidden_features": [
+        256,
+        256
+    ],
+    "l2_weight_decay": 0.0,
+    "lam": 0.95,
+    "log_period": 1,
+    "n_episodes": 4,
+    "noise": 0.0,
+    "noise_clip": 0.0,
+    "replay_buffer_capacity": 0,
+    "reward_scale": 1.0,
+    "seed": null,
+    "tau": 1.0
+}
