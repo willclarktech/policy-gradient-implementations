@@ -23,6 +23,7 @@ class Agent(BaseAgent):
         self.batch_size = hyperparameters.batch_size
         self.c1 = hyperparameters.c1
         self.c2 = hyperparameters.c2
+        self.seed = hyperparameters.seed
 
         env = hyperparameters.env
         if not isinstance(env.action_space, spaces.Box):
@@ -38,7 +39,7 @@ class Agent(BaseAgent):
         self.critic = Critic(in_dims[0], hidden_features, alpha).to(self.device)
 
     def reset_memory(self) -> None:
-        self.memory = PPOMemory(self.batch_size)
+        self.memory = PPOMemory(self.batch_size, self.seed)
 
     def remember(
         self,

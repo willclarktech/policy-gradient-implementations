@@ -27,8 +27,9 @@ algorithms: Dict[str, Algorithm] = {
 
 
 def run(options: Dict[str, Any]) -> BaseAgent:
-    if options.get("seed") is not None:
-        set_seed(options.get("seed"))
+    seed = options.get("seed")
+    if seed is not None:
+        set_seed(seed)
 
     algorithm_name = options.get("algorithm") or ""
     algorithm = algorithms[algorithm_name]

@@ -1,11 +1,11 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np  # type: ignore
 import torch as T
 
 
 class PPOMemory:
-    def __init__(self, batch_size: int):
+    def __init__(self, batch_size: int, seed: Optional[int] = None):
         self.batch_size = batch_size
         self.observations: List[np.ndarray] = []
         self.actions: List[T.Tensor] = []
@@ -14,6 +14,7 @@ class PPOMemory:
         self.next_values: List[float] = []
         self.rewards: List[float] = []
         self.dones: List[bool] = []
+        self.rng = np.random.default_rng(seed)
 
     # pylint: disable=too-many-arguments
     def store(
@@ -49,7 +50,7 @@ class PPOMemory:
         n_next_values = len(self.next_values)
         batch_start_indices = np.arange(0, n_next_values, self.batch_size)
         indices = np.arange(n_next_values, dtype=np.int64)
-        np.random.shuffle(indices)
+        self.rng.shuffle(indices)
         batch_indices = [indices[i : i + self.batch_size] for i in batch_start_indices]
         # pylint: disable=not-callable
         return (
