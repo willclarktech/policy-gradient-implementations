@@ -26,7 +26,7 @@ def run_episode(
 
     tmp_dir = "tmp"
     agent.save(tmp_dir)
-    local_agents = [create_local_agent(hyperparameters, tmp_dir) for _ in range(N)]
+    local_agents: List[Agent] = [agent] * 6
 
     returns: List[float] = []
     t = 0
