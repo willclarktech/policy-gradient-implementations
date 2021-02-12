@@ -1,3 +1,5 @@
+from shutil import rmtree
+from tempfile import mkdtemp
 from typing import List
 
 import gym  # type: ignore
@@ -19,12 +21,13 @@ def run_episode(
     hyperparameters: Hyperparameters,
     should_render: bool = False,
     should_eval: bool = False,
+    tmp_dir: str = mkdtemp(),
 ) -> float:
     N = hyperparameters.N
     T = hyperparameters.T
     env_name = hyperparameters.env_name
 
-    tmp_dir = "tmp"
+    print(f"Using temporary directory {tmp_dir}")
     agent.save(tmp_dir)
     local_agents: List[Agent] = [agent] * 6
 
@@ -70,5 +73,6 @@ def run_episode(
 
         returns.append(ret)
 
+    rmtree(tmp_dir)
     # HACK: The runner would need to be refactored if this was parallelised
     return np.mean(returns)
