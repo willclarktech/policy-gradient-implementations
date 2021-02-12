@@ -62,7 +62,8 @@ class Agent(BaseAgent):
         self, observation: np.ndarray
     ) -> Tuple[T.Tensor, T.Tensor, float]:
         inp = self.process([observation])
-        action, log_probability = self.actor.sample(inp)
+        raw_action, log_probability = self.actor.sample(inp)
+        action = raw_action.cpu().detach().numpy()
         value = self.critic(inp)
         return action, T.squeeze(log_probability), T.squeeze(value).item()
 
