@@ -1,14 +1,15 @@
-from policy_gradients.core import Hyperparameters
+from policy_gradients.core import Hyperparameters, TrainOptions
 from policy_gradients.baseline.agent import Agent
 
 
 def run_episode(
     agent: Agent,
     hyperparameters: Hyperparameters,
-    should_render: bool = False,
-    _should_eval: bool = False,
+    options: TrainOptions,
 ) -> float:
     env = hyperparameters.env
+    should_render = options.should_render
+
     # Necessary for pybullet envs
     if should_render:
         env.render()

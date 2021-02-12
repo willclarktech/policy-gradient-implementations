@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from datetime import datetime
 import json
 import os
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, NamedTuple, Optional, Type, TypeVar, Union
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
@@ -127,16 +127,21 @@ class BaseAgent(metaclass=ABCMeta):
             hyperparameters_json.write(self.hyperparameters.to_json())
 
 
+class TrainOptions(NamedTuple):
+    should_eval: bool
+    should_render: bool
+    tmp_dir: str
+
+
 GenericAgent = TypeVar("GenericAgent", bound=BaseAgent)
-EpisodeRunner = Callable[[GenericAgent, Hyperparameters, bool, bool], float]
+EpisodeRunner = Callable[[GenericAgent, Hyperparameters, TrainOptions], float]
 
 
 def train(
     agent: GenericAgent,
     hyperparameters: Hyperparameters,
     run_episode: EpisodeRunner,
-    should_render: bool = False,
-    should_eval: bool = False,
+    options: TrainOptions,
 ) -> None:
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period
@@ -145,7 +150,7 @@ def train(
     average_returns = []
 
     for i in range(1, n_episodes + 1):
-        ret = run_episode(agent, hyperparameters, should_render, should_eval)
+        ret = run_episode(agent, hyperparameters, options)
 
         returns.append(ret)
         average_return = np.mean(returns[-100:])

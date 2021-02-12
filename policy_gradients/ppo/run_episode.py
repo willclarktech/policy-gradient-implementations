@@ -1,11 +1,9 @@
-from shutil import rmtree
-from tempfile import mkdtemp
 from typing import List
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
 
-from policy_gradients.core import Hyperparameters
+from policy_gradients.core import Hyperparameters, TrainOptions
 from policy_gradients.ppo.agent import Agent
 
 
@@ -19,16 +17,17 @@ def create_local_agent(hyperparameters: Hyperparameters, tmp_dir: str) -> Agent:
 def run_episode(
     agent: Agent,
     hyperparameters: Hyperparameters,
-    should_render: bool = False,
-    should_eval: bool = False,
-    tmp_dir: str = mkdtemp(),
+    options: TrainOptions,
 ) -> float:
     N = hyperparameters.N
     T = hyperparameters.T
     env_name = hyperparameters.env_name
+    should_eval = options.should_eval
+    should_render = options.should_render
+    tmp_dir = options.tmp_dir
 
-    print(f"Using temporary directory {tmp_dir}")
     agent.save(tmp_dir)
+    # Fast type-safe initialisation
     local_agents: List[Agent] = [agent] * 6
 
     returns: List[float] = []
@@ -73,6 +72,5 @@ def run_episode(
 
         returns.append(ret)
 
-    rmtree(tmp_dir)
     # HACK: The runner would need to be refactored if this was parallelised
     return np.mean(returns)

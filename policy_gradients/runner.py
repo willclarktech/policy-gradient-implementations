@@ -1,8 +1,15 @@
 import json
 from pprint import pprint
+from tempfile import mkdtemp
 from typing import Any, Dict, Optional, Tuple
 
-from policy_gradients.core import Algorithm, BaseAgent, Hyperparameters, train
+from policy_gradients.core import (
+    Algorithm,
+    BaseAgent,
+    Hyperparameters,
+    train,
+    TrainOptions,
+)
 from policy_gradients.utils import set_seed
 
 from policy_gradients.actor_critic import algorithm as actor_critic
@@ -90,10 +97,12 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     maybe_set_seed(options)
     algorithm_name, algorithm = get_algorithm(options)
 
-    load_dir = options.pop("load_dir", None)
-    save_dir = options.pop("save_dir", None)
     should_eval = options.pop("eval", False)
     should_render = options.pop("render", False)
+    load_dir = options.pop("load_dir", None)
+    save_dir = options.pop("save_dir", None)
+    tmp_dir = options.pop("tmp_dir", mkdtemp())
+    print(f"Using temporary directory {tmp_dir}")
 
     default_hyperparameter_args = algorithm.default_hyperparameters()
     env_name = get_env_name(options, default_hyperparameter_args)
@@ -119,13 +128,13 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     print("Hyperparameters:")
     pprint(hyperparameter_args)
 
+    train_options = TrainOptions(should_eval, should_render, tmp_dir)
     print("Starting training...")
     train(
         agent,
         hyperparameters,
         algorithm.run_episode,
-        should_render=should_render,
-        should_eval=should_eval,
+        train_options,
     )
     print("Finished training")
 

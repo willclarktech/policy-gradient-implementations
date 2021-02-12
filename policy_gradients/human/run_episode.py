@@ -1,16 +1,16 @@
 from time import sleep
 
-from policy_gradients.core import Hyperparameters
+from policy_gradients.core import Hyperparameters, TrainOptions
 from policy_gradients.human.agent import Agent
 
 
 def run_episode(
     agent: Agent,
     hyperparameters: Hyperparameters,
-    _should_render: bool = False,
-    _should_eval: bool = False,
+    _options: TrainOptions,
 ) -> float:
     env = hyperparameters.env
+
     # Necessary for pybullet envs
     env.render()
 
