@@ -112,6 +112,7 @@ class Agent(BaseAgent):
 
     def learn(self) -> None:
         for _ in range(self.K):
+            sample = self.memory.sample()
             (
                 observations,
                 actions,
@@ -120,13 +121,13 @@ class Agent(BaseAgent):
                 next_values,
                 rewards,
                 dones,
-                batch_indices,
-            ) = self.memory.sample()
+            ) = [self.process(t) for t in sample[:-1]]
+            batch_indices = sample[-1]
 
-            advantages = T.zeros(len(rewards), dtype=T.float32)
+            advantages = T.zeros(len(rewards), dtype=T.float32).to(self.device)
             for t in range(len(rewards) - 1):
                 discount = 1.0
-                advantage = T.scalar_tensor(0.0, dtype=T.float32)
+                advantage = T.scalar_tensor(0.0, dtype=T.float32).to(self.device)
                 for i in range(t, len(rewards) - 1):
                     advantage += discount * (
                         rewards[i]
