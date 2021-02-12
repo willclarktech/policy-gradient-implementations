@@ -16,4 +16,5 @@ def default_hyperparameters() -> Dict[str, Any]:
         replay_buffer_capacity=1_000_000,
         noise=0.2,
         noise_clip=0.5,
+        seed=None,
     )

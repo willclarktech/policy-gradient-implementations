@@ -15,4 +15,5 @@ def default_hyperparameters() -> Dict[str, Any]:
         batch_size=64,
         replay_buffer_capacity=1_000_000,
         l2_weight_decay=0.01,
+        seed=None,
     )

@@ -10,4 +10,5 @@ def default_hyperparameters() -> Dict[str, Any]:
         hidden_features=[2048, 1536],
         alpha=5e-6,
         gamma=0.99,
+        seed=None,
     )
