@@ -25,6 +25,7 @@ class PPOMemory:
         value: float,
         reward: float,
         done: bool,
+        value_next: float,
     ) -> None:
         self.observations.append(observation)
         self.actions.append(action)
@@ -32,8 +33,7 @@ class PPOMemory:
         self.values.append(value)
         self.rewards.append(reward)
         self.dones.append(done)
-        if len(self.values) != 1:
-            self.next_values.append(value)
+        self.next_values.append(value_next)
 
     def sample(
         self,
@@ -47,9 +47,9 @@ class PPOMemory:
         T.Tensor,
         List[np.ndarray],
     ]:
-        n_next_values = len(self.next_values)
-        batch_start_indices = np.arange(0, n_next_values, self.batch_size)
-        indices = np.arange(n_next_values, dtype=np.int64)
+        n_examples = len(self.rewards)
+        batch_start_indices = np.arange(0, n_examples, self.batch_size)
+        indices = np.arange(n_examples, dtype=np.int64)
         self.rng.shuffle(indices)
         batch_indices = [indices[i : i + self.batch_size] for i in batch_start_indices]
         # pylint: disable=not-callable

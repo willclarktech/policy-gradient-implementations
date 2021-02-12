@@ -53,8 +53,9 @@ def run_episode(
             t += 1
 
             if not should_eval:
+                value_ = agent.evaluate(observation_)
                 agent.remember(
-                    observation, action, log_probability, value, reward, done
+                    observation, action, log_probability, value, reward, done, value_
                 )
 
                 if t % T == 0:

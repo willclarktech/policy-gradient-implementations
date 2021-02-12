@@ -49,8 +49,14 @@ class Agent(BaseAgent):
         value: float,
         reward: float,
         done: bool,
+        value_next: float,
     ) -> None:
-        self.memory.store(observation, action, log_probability, value, reward, done)
+        self.memory.store(
+            observation, action, log_probability, value, reward, done, value_next
+        )
+
+    def evaluate(self, observation: np.ndarray) -> float:
+        return self.critic(self.process([observation]))
 
     def choose_action(
         self, observation: np.ndarray
