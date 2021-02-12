@@ -1,6 +1,6 @@
 import json
 from pprint import pprint
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Tuple
 
 from policy_gradients.core import Algorithm, BaseAgent, Hyperparameters, train
 from policy_gradients.utils import set_seed
@@ -14,6 +14,8 @@ from policy_gradients.reinforce import algorithm as reinforce
 from policy_gradients.sac import algorithm as sac
 from policy_gradients.td3 import algorithm as td3
 
+Options = Dict[str, Any]
+
 algorithms: Dict[str, Algorithm] = {
     "actor_critic": actor_critic,
     "baseline": baseline,
@@ -26,27 +28,31 @@ algorithms: Dict[str, Algorithm] = {
 }
 
 
-def run(options: Dict[str, Any]) -> BaseAgent:
+def maybe_set_seed(options: Options) -> None:
     seed = options.get("seed")
     if seed is not None:
         set_seed(seed)
 
+
+def get_algorithm(options: Options) -> Tuple[str, Algorithm]:
     algorithm_name = options.get("algorithm") or ""
     algorithm = algorithms[algorithm_name]
     if algorithm is None:
         raise ValueError(f"Experiment {algorithm_name or '(none)'} not recognized")
+    return algorithm_name, algorithm
 
-    load_dir = options.pop("load_dir", None)
-    save_dir = options.pop("save_dir", None)
-    should_eval = options.pop("eval", False)
-    should_render = options.pop("render", False)
 
-    default_hyperparameter_args = algorithm.default_hyperparameters()
-    env_name = options.get("env_name") or default_hyperparameter_args.get("env_name")
+def get_env_name(options: Options, defaults: Options) -> str:
+    env_name = options.get("env_name") or defaults.get("env_name")
     if env_name is None:
         raise ValueError("No environment specified")
+    return env_name
 
-    loaded_hyperparameter_args = (
+
+def load_hyperparameter_args(
+    algorithm_name: str, env_name: str, load_dir: Optional[str]
+) -> Options:
+    return (
         json.loads(
             open(
                 f"{load_dir}/{algorithm_name}_{env_name}/hyperparameters.json", "r"
@@ -55,6 +61,13 @@ def run(options: Dict[str, Any]) -> BaseAgent:
         if load_dir is not None
         else {}
     )
+
+
+def gather_hyperparameter_args(
+    default_hyperparameter_args: Options,
+    loaded_hyperparameter_args: Options,
+    options: Options,
+) -> Options:
     filtered_loaded_hyperparameter_args = {
         k: v
         for k, v in loaded_hyperparameter_args.items()
@@ -70,7 +83,27 @@ def run(options: Dict[str, Any]) -> BaseAgent:
         **filtered_loaded_hyperparameter_args,
         **filtered_options,
     }
+    return hyperparameter_args
 
+
+def run(options: Dict[str, Any]) -> BaseAgent:
+    maybe_set_seed(options)
+    algorithm_name, algorithm = get_algorithm(options)
+
+    load_dir = options.pop("load_dir", None)
+    save_dir = options.pop("save_dir", None)
+    should_eval = options.pop("eval", False)
+    should_render = options.pop("render", False)
+
+    default_hyperparameter_args = algorithm.default_hyperparameters()
+    env_name = get_env_name(options, default_hyperparameter_args)
+
+    loaded_hyperparameter_args = load_hyperparameter_args(
+        algorithm_name, env_name, load_dir
+    )
+    hyperparameter_args = gather_hyperparameter_args(
+        default_hyperparameter_args, loaded_hyperparameter_args, options
+    )
     hyperparameters = Hyperparameters(**hyperparameter_args)
     agent = algorithm.Agent(hyperparameters)
 
@@ -97,6 +130,8 @@ def run(options: Dict[str, Any]) -> BaseAgent:
     print("Finished training")
 
     if save_dir is not None:
+        print(f"Saving model to {save_dir}...")
         agent.save(save_dir)
+        print("Successfully saved model")
 
     return agent
