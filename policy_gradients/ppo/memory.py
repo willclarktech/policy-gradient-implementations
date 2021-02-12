@@ -5,6 +5,7 @@ import torch as T
 
 
 class PPOMemory:
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, batch_size: int, seed: Optional[int] = None):
         self.batch_size = batch_size
         self.observations: List[np.ndarray] = []

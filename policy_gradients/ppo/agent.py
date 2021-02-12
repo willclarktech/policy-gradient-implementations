@@ -110,6 +110,7 @@ class Agent(BaseAgent):
         self.actor.optimizer.step()
         self.critic.optimizer.step()
 
+    # pylint: disable=too-many-locals
     def learn(self) -> None:
         for _ in range(self.K):
             sample = self.memory.sample()
