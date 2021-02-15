@@ -1,7 +1,9 @@
 import json
 from pprint import pprint
+import signal
+import sys
 from tempfile import mkdtemp
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from policy_gradients.core import (
     Algorithm,
@@ -33,6 +35,27 @@ algorithms: Dict[str, Algorithm] = {
     "sac": sac,
     "td3": td3,
 }
+
+
+def create_interrupt_handler(
+    agent: BaseAgent, save_dir: str
+) -> Callable[[int, Any], None]:
+    def handle_interrupt(signal_number: int, frame: Any) -> None:
+        # pylint: disable=unused-argument
+        print("Training interrupted")
+        answer = None
+
+        while answer not in ["", "n", "no", "y", "yes"]:
+            answer = input("Do you want to save the model? [y/N] ").strip().lower()
+
+        if answer in ["y", "yes"]:
+            print(f"Saving model to {save_dir}...")
+            agent.save(save_dir)
+            print("Successfully saved model")
+
+        sys.exit(0)
+
+    return handle_interrupt
 
 
 def maybe_set_seed(options: Options) -> None:
@@ -120,6 +143,9 @@ def run(options: Dict[str, Any]) -> BaseAgent:
         print(f"Loading model from {load_dir}...")
         agent.load(load_dir)
         print("Successfully loaded model")
+
+    if save_dir is not None:
+        signal.signal(signal.SIGINT, create_interrupt_handler(agent, save_dir))
 
     if should_eval:
         agent.eval()
