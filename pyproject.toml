@@ -3,6 +3,8 @@ name = "policy_gradients"
 version = "0.0.0"
 description = "Implementing reinforcement learning algorithms based on policy gradients."
 authors = ["willclarktech <willclarktech@users.noreply.github.com>"]
+readme = "README.md"
+repository = "https://github.com/willclarktech/policy-gradient-implementations/"
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
