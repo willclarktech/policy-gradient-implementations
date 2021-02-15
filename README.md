@@ -8,10 +8,10 @@ Implementing reinforcement learning algorithms based on policy gradients.
 
 ## Installation
 
-Using Pipenv:
+Using poetry:
 
 ```sh
-pipenv install
+poetry install
 ```
 
 Using pip:
@@ -81,16 +81,35 @@ A set of notebooks is provided in `./notebooks` which demonstrates how to train 
 jupyter notebook
 ```
 
+## Development
+
+The following scripts assume the requirements have been installed. If using poetry, they assume `poetry shell` has already been run or else they should be prefixed with `poetry run`.
+
+### Lint
+
+```sh
+pylint ./policy_gradients
+```
+
+### Typecheck
+
+```sh
+mypy
+```
+
+### Format
+
+```sh
+black ./policy_gradients
+```
+
+### Generating requirements files
+
+```sh
+./scripts/generate_requirements.sh
+```
+
 ## Troubleshooting
-
-### Pipenv
-
-I had trouble installing some packages (e.g. `pybullet`) directly using Pipenv. This worked for me:
-
-1. Start a Pipenv shell: `pipenv shell`
-2. Install `pybullet` using pip: `pip install pybullet`
-3. Add `pybullet` to `Pipfile` manually
-4. Generate lockfile: `pipenv lock`
 
 ### Poetry
 
