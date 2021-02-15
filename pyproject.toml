@@ -7,7 +7,7 @@ readme = "README.md"
 repository = "https://github.com/willclarktech/policy-gradient-implementations/"
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = ">= 3.6.2, < 3.9.0"
 gym = {extras = ["box2d"], version = "^0.18.0"}
 matplotlib = "^3.3.4"
 pybullet = "^3.0.8"
