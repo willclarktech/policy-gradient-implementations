@@ -136,6 +136,8 @@ class TrainOptions(NamedTuple):
 GenericAgent = TypeVar("GenericAgent", bound=BaseAgent)
 EpisodeRunner = Callable[[GenericAgent, Hyperparameters, TrainOptions], float]
 
+MIN_EPISODES = 100
+
 
 def train(
     agent: GenericAgent,
@@ -145,6 +147,8 @@ def train(
 ) -> None:
     n_episodes = hyperparameters.n_episodes
     log_period = hyperparameters.log_period
+    reward_threshold = hyperparameters.env.spec.reward_threshold
+    print(f"Reward threshold is: {reward_threshold}")
 
     returns = []
     average_returns = []
@@ -153,13 +157,21 @@ def train(
         ret = run_episode(agent, hyperparameters, options)
 
         returns.append(ret)
-        average_return = np.mean(returns[-100:])
+        average_return = np.mean(returns[-MIN_EPISODES:])
         average_returns.append(average_return)
 
         if i % log_period == 0:
             print(
                 f"[{datetime.now().isoformat(timespec='seconds')}] Episode {i}; Return {ret}; Average return {average_return}"
             )
+
+        if (
+            len(returns) >= MIN_EPISODES
+            and reward_threshold
+            and average_return >= reward_threshold
+        ):
+            print("Reached reward threshold. Stopping early.")
+            break
 
     plot_returns(returns, average_returns)
 
