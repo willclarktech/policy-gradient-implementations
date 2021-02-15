@@ -83,9 +83,15 @@ jupyter notebook
 
 ## Troubleshooting
 
+### Pipenv
+
 I had trouble installing some packages (e.g. `pybullet`) directly using Pipenv. This worked for me:
 
 1. Start a Pipenv shell: `pipenv shell`
 2. Install `pybullet` using pip: `pip install pybullet`
 3. Add `pybullet` to `Pipfile` manually
 4. Generate lockfile: `pipenv lock`
+
+### Poetry
+
+I had trouble installing `gym` with Poetry because of its `Pillow` dependency and something to do with `zlib`. Setting `PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig"` fixed this problem.
