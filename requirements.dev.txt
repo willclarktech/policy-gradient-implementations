@@ -22,7 +22,7 @@ gym==0.18.0; python_version >= "3.6"
 importlib-metadata==3.4.0; python_version < "3.8" and python_version >= "3.6"
 ipykernel==5.4.3; python_version >= "3.6"
 ipython-genutils==0.2.0; python_version >= "3.6"
-ipython==7.16.1; python_version >= "3.6"
+ipython==8.10.0; python_version >= "3.6"
 ipywidgets==7.6.3
 isort==5.7.0; python_version >= "3.6" and python_version < "4.0"
 jedi==0.18.0; python_version >= "3.6"
