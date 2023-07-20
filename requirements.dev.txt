@@ -62,7 +62,7 @@ py==1.10.0; python_version >= "3.6" and python_full_version < "3.0.0" and implem
 pybullet==3.0.8
 pycparser==2.20; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.5"
 pyglet==1.5.0; python_version >= "3.6"
-pygments==2.8.0; python_version >= "3.6"
+pygments==2.15.0; python_version >= "3.6"
 pylint==2.6.0; python_version >= "3.5"
 pyparsing==2.4.7; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 pyrsistent==0.17.3; python_version >= "3.5"
